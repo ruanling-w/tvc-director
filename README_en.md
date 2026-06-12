@@ -135,10 +135,10 @@ git clone https://github.com/Ethanxwang/tvc-director.git ~/.claude/skills/tvc-di
 
 | Mode | Trigger | Description |
 |------|---------|-------------|
-| **A: Full TVC Pipeline** | "帮我做一条xx产品广告" | Brief → Concept → Style → Assets → Keyframes → Package |
-| **B: Quick Asset/Prompt** | "帮我做一个产品 Hero Shot" | Skip creative phase, go to asset or keyframe generation |
+| **A: Full TVC Pipeline** | "Help me make a TVC ad for [product]" | Brief → Concept → Style → Assets → Keyframes → Package |
+| **B: Quick Asset/Prompt** | "Help me make a product Hero Shot" | Skip creative phase, go to asset or keyframe generation |
 | **C: Storyboard** | Provide a TVC script/storyboard | Style → Assets → Convert storyboard to keyframes |
-| **D: Iteration** | "这张产品图xx不对" | Fix and regenerate specific assets or keyframes |
+| **D: Iteration** | "This product image is wrong at..." | Fix and regenerate specific assets or keyframes |
 
 ## TVC Narrative Models
 
@@ -158,7 +158,7 @@ git clone https://github.com/Ethanxwang/tvc-director.git ~/.claude/skills/tvc-di
 ```
 my-tvc-project/
 ├── concept.md                      # TVC creative brief
-├── storyboard.md                   # Storyboard (if applicable)
+├── storyboard_en.md                   # Storyboard (if applicable)
 │
 ├── assets/                         # Product asset prompts (Nano Banana Pro)
 │   └── prompts/
@@ -192,12 +192,12 @@ Knowledge base is organized by crew roles in real ad production, loaded on deman
 
 | Crew Role | File | Real Production Equivalent | Loading |
 |-----------|------|---------------------------|---------|
-| Line Producer | `SKILL.md` | Production workflow control, phase transitions | Always loaded |
-| Creative Director | `treatment.md` | Creative pitches, narrative models, category strategy, casting decisions | Creative Proposal |
-| Director of Photography | `shot-language.md` | Shot language, art style system, scene types, composition paradigms | Look Dev / Storyboard |
-| Production Team | `pre-production.md` | Casting & wardrobe, product photography, location scouting, asset consistency | Pre-production |
-| Director | `storyboard.md` | Storyboard, video scripts, product breakdown, brand world shots | Storyboard & Shoot |
-| Post-production | `delivery.md` | Output formats, iteration guide (11 failure modes) | Review / Delivery |
+| Line Producer | `SKILL_en.md` | Production workflow control, phase transitions | Always loaded |
+| Creative Director | `treatment_en.md` | Creative pitches, narrative models, category strategy, casting decisions | Creative Proposal |
+| Director of Photography | `shot-language_en.md` | Shot language, art style system, scene types, composition paradigms | Look Dev / Storyboard |
+| Production Team | `pre-production_en.md` | Casting & wardrobe, product photography, location scouting, asset consistency | Pre-production |
+| Director | `storyboard_en.md` | Storyboard, video scripts, product breakdown, brand world shots | Storyboard & Shoot |
+| Post-production | `delivery_en.md` | Output formats, iteration guide (11 failure modes) | Review / Delivery |
 
 ## License
 
