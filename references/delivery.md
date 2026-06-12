@@ -1,614 +1,614 @@
-# TVC 输出格式与迭代知识库
+# TVC Output Format & Iteration Knowledge Base
 
-> **职责**：提示词输出格式模板 + 迭代优化指南。
-> **不管**：创意策略（查 treatment.md）、提示词工程（查 shot-language.md）、分镜与视频（查 storyboard.md）。
-
----
-
-## Part 1: 输出格式模板
-
-单帧、序列、TVC 资产序列、Multi-Phase 视频提示词和 End Frame 的输出格式模板。
+> **Responsibility**: Prompt output format templates + iterative optimization guides.
+> **Out of Scope**: Creative strategies (refer to [treatment.md](treatment.md)), prompt engineering (refer to [shot-language.md](shot-language.md)), storyboards & videos (refer to [storyboard.md](storyboard.md)).
 
 ---
 
-## 一、模式一：单张关键帧提示词
+## Part 1: Output Format Templates
 
-当用户需要生成**单张特定画面**时使用。
+Output format templates for single frames, sequences, TVC asset sequences, Multi-Phase video prompts, and End Frames.
 
-**输出结构**：
+---
+
+## I. Mode 1: Single Keyframe Prompt
+
+Used when the user needs to generate a **single specific frame**.
+
+**Output Structure**:
 
 ```
-### 关键帧：[标题]
-**用途**：[这张图在视频中的作用——首帧/尾帧/转场帧/角色设定/环境设定]
-**画面比例**：[16:9 / 9:16 / 1:1 / 根据用途建议]
+### Keyframe: [Title]
+**Usage**: [Role of this frame in the video—first frame / end frame / transition frame / character setting / environment setting]
+**Aspect Ratio**: [16:9 / 9:16 / 1:1 / Recommended based on usage]
 
-**Nano Banana Pro 提示词**：
-[直接可复制使用的完整提示词]
+**Nano Banana Pro Prompt**:
+[Complete prompt ready to be copied and used directly]
 
-**参考图需求**：[用户是否已提供参考图。有→标注"已提供，附图生成"；无→标注"无参考图，纯文字描述生成"]
+**Reference Image Requirements**: [Whether the user has provided reference images. Yes → label "Provided, generate with attached image"; No → label "No reference image, generate with pure text description"]
 
-**生成建议**：[针对这张图的生成注意事项，如可能需要多次微调的部分]
+**Generation Recommendations**: [Notes for generating this image, such as parts that may require multiple fine-tunings]
 ```
 
 ---
 
-## 二、模式二：关键帧序列提示词
+## II. Mode 2: Keyframe Sequence Prompt
 
-当用户需要为一个完整的分镜脚本生成**一组关键帧**时使用。
+Used when the user needs to generate a **set of keyframes** for a complete storyboard script.
 
-**输出结构**：
+**Output Structure**:
 
 ```
-## 关键帧序列：[项目名称]
+## Keyframe Sequence: [Project Name]
 
-### 生成顺序与依赖关系
-| 序号 | 关键帧 | 类型 | 依赖 | 优先级 |
-|------|--------|------|------|--------|
-| 1 | ... | 角色设定 | 无 | ★★★★★ |
-| 2 | ... | 环境概念 | 无 | ★★★★★ |
-| 3 | ... | 叙事构图 | 依赖#1、#2 | ★★★★☆ |
-| ... | ... | ... | ... | ... |
+### Generation Sequence & Dependencies
+| ID | Keyframe | Type | Dependency | Priority |
+|----|----------|------|------------|----------|
+| 1  | ...      | Character Setting | None | ★★★★★ |
+| 2  | ...      | Environmental Concept | None | ★★★★★ |
+| 3  | ...      | Narrative Composition | Depends on #1, #2 | ★★★★☆ |
+| ...| ...      | ...  | ...        | ...      |
 
-### 一致性锚点
-- **角色一致性**：[如何维护多张图中角色的一致性]
-- **环境一致性**：[如何维护环境风格统一]
-- **色调一致性**：[如何维护整组图的色彩基调]
+### Consistency Anchors
+- **Character Consistency**: [How to maintain character consistency across multiple images]
+- **Environmental Consistency**: [How to maintain a unified environmental style]
+- **Color Tone Consistency**: [How to maintain the color palette of the entire set of images]
 
 ---
 
-### 帧1：[标题]
-（同模式一的单帧结构）
+### Frame 1: [Title]
+(Same as the single-frame structure in Mode 1)
 
-### 帧2：[标题]
+### Frame 2: [Title]
 ...
 ```
 
 ---
 
-## 三、序列生成顺序原则
+## III. Sequence Generation Order Principles
 
-1. **先角色后场景**：角色设定图（三视图/特写）优先生成，后续场景图可引用角色参考
-2. **先环境后构图**：独立的环境概念图优先，叙事构图在角色+环境都确定后生成
-3. **先全局后细节**：大远景/全景优先确定整体氛围，再生成特写/局部
-4. **关键帧 > 过渡帧**：高潮画面、首帧、定格帧优先，过渡帧最后
-
----
-
-## 四、一致性维护策略
-
-### 角色一致性
-
-- 首先生成角色三视图/设定图，建立视觉基准
-- 后续场景图使用 `图中[角色名]` 或 `图1` 引用角色参考图
-- 同一角色在不同场景中的服装、发型、体型描述保持一致
-- 如有特殊变化（受伤、换装），明确标注变化点
-
-### 环境一致性
-
-- 同一场景的不同角度/镜头保持相同的材质、色调、大气描述
-- 使用统一的环境关键词锁定风格
-- 先生成环境概念图确定基调，再在叙事构图中引用
-
-### 色调一致性
-
-- 全套关键帧使用统一的画风方向（A/B/C/D/E）
-- 色调变化应遵循创意方案中的色彩弧线设计
-- 在每帧提示词的画风锚定部分保持相同的核心词
+1. **Characters Before Scenes**: Character setting images (three-view drawings / close-ups) are generated first; subsequent scene images can reference character references.
+2. **Environment Before Composition**: Independent environment concept images take priority; narrative composition is generated after both character and environment are determined.
+3. **Global Before Details**: Wide shots / panoramas take priority to establish the overall atmosphere, followed by close-ups / partial shots.
+4. **Keyframes > Transition Frames**: Climax frames, first frames, and freeze frames take priority; transition frames are generated last.
 
 ---
 
-## 五、模式三：TVC 产品资产序列
+## IV. Consistency Maintenance Strategies
 
-当需要为 TVC 广告片建立**产品视觉资产库**时使用。产品资产是 TVC 视觉体系的基石——所有后续场景、视频提示词和 End Frame 都依赖产品资产作为视觉锚点。
+### Character Consistency
 
-**输出结构**：
+- First generate character three-view drawings / setting images to establish a visual baseline.
+- Subsequent scene images use `[Character Name] in the image` or `Image 1` to reference character reference images.
+- Clothing, hairstyle, and body type descriptions for the same character remain consistent across different scenes.
+- If there are special changes (injury, outfit changes), explicitly annotate the change points.
+
+### Environmental Consistency
+
+- Different angles/shots of the same scene maintain the same materials, color tones, and atmospheric descriptions.
+- Use unified environmental keywords to lock in the style.
+- First generate environment concept images to determine the keynote, then reference them in narrative compositions.
+
+### Color Tone Consistency
+
+- The entire set of keyframes uses a unified art style direction (A/B/C/D/E).
+- Color tone variations should follow the color arc design in the creative pitch.
+- Keep the same core words in the art style anchor portion of each frame's prompt.
+
+---
+
+## V. Mode 3: TVC Product Asset Sequence
+
+Used when establishing a **product visual asset library** for a TVC commercial. Product assets are the cornerstone of the TVC visual system—all subsequent scenes, video prompts, and End Frames rely on product assets as visual anchors.
+
+**Output Structure**:
 
 ```
-## 产品资产序列：[产品名称]
+## Product Asset Sequence: [Product Name]
 
-### 产品资产清单
-| 序号 | 资产类型 | 用途 | 优先级 |
-|------|---------|------|--------|
-| 1 | 产品 Hero Shot | 锁定产品主视觉 | ★★★★★ |
-| 2 | 产品材质微距 | 锁定材质质感 | ★★★★☆ |
-| 3 | 品牌世界环境 | 锁定使用场景氛围 | ★★★★☆ |
-| 4 | 产品交互特写 | 锁定使用动作/手势 | ★★★☆☆ |
-| 5 | 产品包装/配件 | 锁定品牌周边元素 | ★★★☆☆ |
-| ... | ... | ... | ... |
+### Product Asset Inventory
+| ID | Asset Type | Usage | Priority |
+|----|------------|-------|----------|
+| 1  | Product Hero Shot | Lock in the product's primary visual | ★★★★★ |
+| 2  | Product Material Macro | Lock in the material texture | ★★★★☆ |
+| 3  | Brand World Environment | Lock in the usage scenario atmosphere | ★★★★☆ |
+| 4  | Product Interaction Close-up | Lock in usage actions / gestures | ★★★☆☆ |
+| 5  | Product Packaging/Accessories | Lock in brand peripheral elements | ★★★☆☆ |
+| ...| ...        | ...   | ...      |
 
-### 产品一致性锚点
-- **产品外观**：[产品的形状、比例、标志性设计特征的精确描述]
-- **材质/光影**：[产品表面材质类型、反射特性、推荐打光方式]
-- **品牌色**：[主色/辅色/点缀色的具体色值或描述性定义]
-
----
-
-### 资产1：产品 Hero Shot
-**用途**：锁定产品主视觉，作为后续所有产品出镜画面的参考基准
-**画面比例**：16:9
-
-**Nano Banana Pro 提示词**：
-[直接可复制使用的完整提示词]
-
-**参考图需求**：[用户是否已提供产品参考图。有→标注"已提供，附图生成"；无→标注"无参考图，纯文字描述生成"]
-
-**生成建议**：[针对产品渲染的生成注意事项，如材质精度、Logo 清晰度等]
+### Product Consistency Anchors
+- **Product Appearance**: [Precise description of the product's shape, proportions, and signature design features]
+- **Material / Lighting**: [Product surface material type, reflection characteristics, recommended lighting setup]
+- **Brand Colors**: [Specific color codes or descriptive definitions for primary/secondary/accent colors]
 
 ---
 
-### 资产2：产品材质微距
+### Asset 1: Product Hero Shot
+**Usage**: Lock in the product's primary visual, serving as the reference baseline for all subsequent product shots.
+**Aspect Ratio**: 16:9
+
+**Nano Banana Pro Prompt**:
+[Complete prompt ready to be copied and used directly]
+
+**Reference Image Requirements**: [Whether the user has provided product reference images. Yes → label "Provided, generate with attached image"; No → label "No reference image, generate with pure text description"]
+
+**Generation Recommendations**: [Notes for generating product renders, such as material precision, Logo clarity, etc.]
+
+---
+
+### Asset 2: Product Material Macro
 ...
 
-### 资产3：品牌世界环境
+### Asset 3: Brand World Environment
 ...
 ```
 
-**使用要点**：
+**Key Usage Points**:
 
-- 产品 Hero Shot 是最高优先级资产，必须首先生成并确认
-- 后续所有涉及产品的关键帧和视频提示词，均应引用 Hero Shot 作为视觉锚点
-- 品牌世界环境图用于锁定产品出现的场景氛围基调，后续场景帧在此基础上细化
+- The Product Hero Shot is the highest priority asset and must be generated and confirmed first.
+- All subsequent keyframes and video prompts involving the product must reference the Hero Shot as the visual anchor.
+- Brand world environment images are used to lock in the atmospheric keynote of the scenes where the product appears, with subsequent scene frames refined on this basis.
 
 ---
 
-## 六、模式四：TVC Multi-Phase 视频提示词
+## VI. Mode 4: TVC Multi-Phase Video Prompts
 
-当需要为 TVC 的某一分镜段落生成**可直接用于视频生成工具的分阶段提示词**时使用。每个 Segment 对应多宫格分镜中的一个格子。
+Used when generating **segmented prompts that can be directly used in video generation tools** for a specific storyboard section of the TVC. Each Segment corresponds to one panel in the multi-grid storyboard.
 
-**输出结构**：
+**Output Structure**:
 
 ```
-## TVC 视频提示词：[项目名称] · Segment [N]（[时段]）
+## TVC Video Prompt: [Project Name] · Segment [N] ([Timeframe])
 
-**对应多宫格**：Grid [N]
-**世界类型**：产品世界 / 品牌世界 / 交叉
-**时长**：[X]s
+**Corresponding Multi-Grid**: Grid [N]
+**World Type**: Product World / Brand World / Crossover
+**Duration**: [X]s
 
-**Multi-Phase 视频提示词**：
-风格：[整体视觉风格描述——影调、色彩基调、质感]
-Phase 1 (0-Xs): [运动/动作/画面内容描述]
-Phase 2 (X-Ys): [运动/动作/画面内容描述]
-Phase 3 (Y-Zs): [运动/动作/画面内容描述]
+**Multi-Phase Video Prompt**:
+Style: [Overall visual style description—tone, color keynote, texture]
+Phase 1 (0-Xs): [Description of motion / action / visual content]
+Phase 2 (X-Ys): [Description of motion / action / visual content]
+Phase 3 (Y-Zs): [Description of motion / action / visual content]
 ...
-光影要求：[该段落的光影调性——自然光/棚拍光/特效光等]
+Lighting Requirements: [Lighting tone of this segment—natural light / studio light / special effects light, etc.]
 
-**首帧关键帧引用**：[对应的关键帧资产编号或名称]
+**First-Frame Keyframe Reference**: [Corresponding keyframe asset ID or name]
 
-**衔接备注**：
-- 与上一段的衔接：[尾帧→首帧的视觉/运动/情绪衔接方式]
-- 与下一段的衔接：[本段尾帧如何为下一段的首帧做铺垫]
+**Transition Notes**:
+- Connection with the previous segment: [Visual / motion / emotional transition method from end frame to first frame]
+- Connection with the next segment: [How the end frame of this segment sets up the first frame of the next segment]
 ```
 
-**使用要点**：
+**Key Usage Points**:
 
-- 每个 Segment 的首帧应由已生成的关键帧资产锚定，确保视频起始画面的可控性
-- Phase 划分基于镜头内的运动节奏，而非机械等分时间
-- 衔接备注是 TVC 流畅性的关键——确保段落间的运动方向、色调、情绪不断裂
-- 世界类型标注用于快速识别该段落属于产品展示逻辑还是品牌叙事逻辑
+- The first frame of each Segment should be anchored by the already generated keyframe asset to ensure the controllability of the video's starting scene.
+- Phase division is based on the movement rhythm within the shot, rather than mechanically dividing the time equally.
+- Transition notes are key to TVC fluidity—ensuring that the movement direction, color tone, and emotion between segments do not break.
+- World Type annotations are used to quickly identify whether the segment belongs to product display logic or brand narrative logic.
 
 ---
 
-## 七、模式五：End Frame 专用输出
+## VII. Mode 5: End Frame Dedicated Output
 
-当需要生成 TVC 广告片的**收束定格画面（End Frame）**时使用。End Frame 是整支广告的最终视觉落点，承载品牌记忆和行动召唤。
+Used when generating the **final freeze-frame (End Frame)** of a TVC commercial. The End Frame is the final visual resolution of the entire ad, carrying brand recall and call-to-action.
 
-**输出结构**：
+**Output Structure**:
 
 ```
-### End Frame：[产品名]
-**用途**：TVC 收束定格
-**画面比例**：16:9
-**文字叠加区域**：[描述 Logo 和 Slogan 预留位置——如"画面上方 1/3 留白用于 Logo 居中，下方 1/5 区域用于 Slogan"]
+### End Frame: [Product Name]
+**Usage**: TVC final freeze-frame
+**Aspect Ratio**: 16:9
+**Text Overlay Area**: [Description of reserved space for Logo and Slogan—e.g., "Top 1/3 of the frame left blank for Logo centering, bottom 1/5 area for Slogan"]
 
-**Nano Banana Pro 提示词**：
-[直接可复制使用的完整提示词——画面需预留文字叠加空间，避免核心视觉元素占据文字区域]
+**Nano Banana Pro Prompt**:
+[Complete prompt ready to be copied and used directly—the frame must reserve space for text overlay, avoiding core visual elements occupying the text area]
 
-**参考图需求**：[是否需要品牌 VI 参考图、Logo 文件等]
+**Reference Image Requirements**: [Whether brand VI reference images, Logo files, etc., are needed]
 
-**生成建议**：[End Frame 特有的生成注意事项，如留白区域的控制、品牌色的准确性等]
+**Generation Recommendations**: [Generation notes unique to the End Frame, such as control of blank spaces, brand color accuracy, etc.]
 
-**后期叠加指引**：
-- **Logo 位置**：[具体区域描述，如"画面正中偏上，占画面宽度的 30%"]
-- **Slogan 位置**：[具体区域描述，如"Logo 正下方，与 Logo 间距约 40px"]
-- **推荐字体风格**：[与品牌调性匹配的字体风格建议，如"无衬线/现代/手写体"]
-- **推荐字色**：[基于画面底色的文字颜色建议]
+**Post-Overlay Guidelines**:
+- **Logo Position**: [Specific area description, e.g., "Top-center of the screen, occupying 30% of the screen width"]
+- **Slogan Position**: [Specific area description, e.g., "Directly below the Logo, with a spacing of approximately 40px from the Logo"]
+- **Recommended Font Style**: [Font style suggestions matching the brand tone, e.g., "Sans-serif / Modern / Handwritten"]
+- **Recommended Text Color**: [Text color suggestions based on the frame's background color]
 ```
 
-**使用要点**：
+**Key Usage Points**:
 
-- End Frame 的提示词必须刻意预留文字叠加空间，这是与普通关键帧的核心区别
-- 画面应简洁、高级、克制，避免复杂场景与产品争夺视觉注意力
-- 品牌色在 End Frame 中的呈现需高度精准，建议参考品牌 VI 手册
-- 后期叠加指引为设计师提供可执行的排版方案，减少来回沟通成本
-
----
-
-## 八、TVC 序列生成顺序原则
-
-TVC 广告片的资产生成遵循**产品优先、逐层推进**的顺序，确保视觉一致性从核心向外辐射：
-
-1. **先产品后场景**：产品 Hero Shot 最先生成，锁定产品的视觉基准（形态、材质、光影）。所有后续涉及产品的画面均以此为参考锚点
-2. **先产品后品牌世界**：产品资产全部确认后，再生成品牌世界的环境、氛围、叙事场景。避免场景先行导致产品与环境风格脱节
-3. **先多宫格后视频提示词**：多宫格分镜关键帧全部锁定后，再逐段生成 Multi-Phase 视频提示词。关键帧是视频提示词的视觉锚，顺序不可颠倒
-4. **End Frame 最后**：End Frame 在所有视觉方向锁定后最后生成。此时整支 TVC 的色调、质感、品牌表达已充分明确，End Frame 可精准收束全片调性
+- The End Frame prompt must deliberately reserve space for text overlays; this is the core difference from regular keyframes.
+- The visual should be clean, premium, and restrained, avoiding complex scenes that compete with the product for visual attention.
+- The presentation of brand colors in the End Frame must be highly accurate; referring to the brand VI manual is recommended.
+- Post-overlay guidelines provide executable layout solutions for designers, reducing back-and-forth communication costs.
 
 ---
 
-## Part 2: 迭代优化指南
+## VIII. TVC Sequence Generation Order Principles
 
-单变量迭代原则、11 种常见失败模式及修正方案、微调技巧与版本管理。
+Asset generation for TVC commercials follows a **product-first, layer-by-layer progression** order, ensuring visual consistency radiates outward from the core:
+
+1. **Products Before Scenes**: The Product Hero Shot is generated first to lock in the product's visual baseline (shape, materials, lighting). All subsequent frames involving the product use this as a reference anchor.
+2. **Products Before Brand World**: Once all product assets are confirmed, generate the environment, atmosphere, and narrative scenes of the brand world. Avoid generating scenes first, which leads to style mismatch between the product and environment.
+3. **Multi-Grids Before Video Prompts**: Once all multi-grid storyboard keyframes are locked, generate the Multi-Phase video prompts segment by segment. Keyframes are the visual anchors for video prompts; the order cannot be reversed.
+4. **End Frame Last**: The End Frame is generated last after all visual directions are locked. By this time, the color tone, texture, and brand expression of the entire TVC are fully clarified, allowing the End Frame to precisely resolve the film's overall tone.
 
 ---
 
-## 一、迭代核心原则
+## Part 2: Iterative Optimization Guide
 
-### 1. 单变量原则
+Single-variable iteration principles, 11 common failure modes & correction schemes, fine-tuning tips, and version management.
 
-每次迭代只修改**一个变量**，观察效果变化。如果同时改了三个地方，无法判断哪个修改起了作用。
+---
 
-| 做法 | 效果 |
+## I. Core Principles of Iteration
+
+### 1. Single-Variable Principle
+
+Modify only **one variable** per iteration to observe changes in effect. If you change three places at the same time, it is impossible to determine which modification worked.
+
+| Practice | Effect |
 |------|------|
-| ❌ 一次改了构图+光影+色调 | 无法归因，可能改对一个改坏两个 |
-| ✅ 先只改光影描述 | 明确光影描述是否是问题根源 |
-| ✅ 确认光影OK后再调构图 | 逐步逼近目标 |
+| ❌ Changing composition + lighting + color tone at once | Unable to attribute cause; might fix one but ruin two others |
+| ✅ Modifying only the lighting description first | Clarifies whether the lighting description is the root cause of the issue |
+| ✅ Adjusting composition after confirming lighting is OK | Progressively approaches the target |
 
-### 2. 加减法原则
+### 2. Addition and Subtraction Principle
 
-修正的第一步是判断问题是"多了什么"还是"少了什么"：
+The first step of correction is determining whether the problem is "too much of something" or "not enough of something":
 
-- **多了不想要的元素** → 减法：删除可能暗示该元素的词汇
-- **少了想要的效果** → 加法：加入更具体的描述词
-- **效果方向错了** → 替换：换用含义更精确的词
+- **Unwanted elements added** → Subtraction: Delete words that might imply that element.
+- **Desired effect missing** → Addition: Add more specific descriptive words.
+- **Effect direction is wrong** → Replacement: Substitute with words that have more precise meanings.
 
-### 3. 位置权重原则
+### 3. Position Weight Principle
 
-Nano Banana Pro 中，提示词**越靠前的词权重越高**。如果某个效果不够强：
-- 把对应描述**移到更前面的位置**
-- 或者在**开头就加入**最重要的画质/风格锚定
+In Nano Banana Pro, **words positioned earlier have higher weight**. If a certain effect is not strong enough:
+- Move the corresponding description **to a more forward position**.
+- Or **add at the very beginning** the most important quality/style anchors.
 
-### 4. 避免"越改越差"
+### 4. Avoid "Getting Worse as You Edit"
 
-| 陷阱 | 如何避免 |
+| Pitfall | How to Avoid |
 |------|---------|
-| 反复在同一句话上微调十几次 | 超过3次微调无效时，退一步分析根本原因 |
-| 为了修一个问题加了太多词 | 提示词越长不等于越好，精简后重新来 |
-| 从一个极端摆到另一个极端 | 不要从"太暗"直接改到"明亮"，用中间态过渡 |
-| 忘了之前成功的版本 | 保留每次迭代的提示词文本，随时可以回退 |
+| Finetuning the same sentence repeatedly over a dozen times | Take a step back to analyze the root cause when fine-tuning is ineffective after 3 attempts |
+| Adding too many words to fix a single issue | Longer prompts do not equal better results; simplify and start over |
+| Swinging from one extreme to another | Do not change directly from "too dark" to "bright"; use intermediate states as transitions |
+| Forgetting previously successful versions | Retain the prompt text of each iteration so you can roll back at any time |
 
 ---
 
-## 二、常见失败模式与修正方案
+## II. Common Failure Modes & Correction Schemes
 
-### 模式1：画面太亮 / 不够暗
+### Mode 1: Frame Too Bright / Not Dark Enough
 
-**症状**：明明要求了"极度昏暗"，但生成结果仍然偏亮或有不合理的光源。
+**Symptoms**: Even though "extremely dark" was requested, the generated result is still bright or has unreasonable light sources.
 
-**原因分析**：
-- 描述中有暗示光源的词（如提到"火把"、"灯光"、"阳光"等）
-- "昏暗"的描述不够强烈
-- 没有明确说"几乎全黑"
+**Root Cause Analysis**:
+- Description contains words implying light sources (e.g., mentioning "torches", "lights", "sunlight", etc.)
+- The description of "dark" is not strong enough.
+- Did not explicitly state "almost entirely black".
 
-**修正方案**：
+**Correction Scheme**:
 ```
-加入：环境极度昏暗 / 几乎全黑的环境 / 大部分空间被深邃的阴影吞没
-加入：光线衰减极快
-删除：任何可能暗示额外光源的词（火把、灯、明亮的XX）
-前置：将"极度昏暗"移到描述最前面
-```
-
-### 模式2：出现了不想要的物体
-
-**症状**：画面中出现了没有要求的物体（如不需要的火把、人物、家具等）。
-
-**原因分析**：
-- 某些描述词隐含了这些物体（如"洞穴"可能自动生成火把）
-- 上下文暗示（如"大厅"可能自动生成家具）
-
-**修正方案**：
-```
-方法1：直接删除可能暗示该物体的描述
-方法2：如果删除后物体仍然出现，在描述末尾加入排除指令
-方法3：用更具体的空间描述替代模糊的空间类型词
+Add: Extremely dark environment / Almost entirely black environment / Most of the space engulfed in deep shadows
+Add: Rapid light falloff
+Delete: Any words that might imply extra light sources (torches, lights, bright XX)
+Prepend: Move "extremely dark" to the very beginning of the description
 ```
 
-**实例**：不想要火把
+### Mode 2: Unwanted Objects Appearing
+
+**Symptoms**: Objects that were not requested (such as unwanted torches, characters, furniture, etc.) appear in the frame.
+
+**Root Cause Analysis**:
+- Certain descriptive words implicitly contain these objects (e.g., "cave" might automatically generate torches).
+- Contextual implication (e.g., "hall" might automatically generate furniture).
+
+**Correction Scheme**:
 ```
-❌ 一个昏暗的地下洞穴大厅
-✅ 一个极度昏暗的地下深渊大厅，没有任何人造光源，只有微弱的蓝色生物荧光
-```
-
-### 模式3：空间感不够 / 不够宏大
-
-**症状**：明明描述了"宏大"，但生成的空间看起来很小、很平。
-
-**原因分析**：
-- 缺乏垂直维度描述（天花板/穹顶）
-- 缺乏大气透视（雾气、尘埃）
-- 视角不够极端
-- 缺乏参照物提供尺度感
-
-**修正方案**：
-```
-加入：天花板高耸入云，消失在浓重的黑暗中（垂直维度）
-加入：空气中弥漫着极其浓厚的体积雾，使远处变得虚无缥缈（大气透视）
-加入：极低的视角以凸显空间的恐怖高度（极端视角）
-加入：巨大的生物立柱像通天塔一样支撑着黑暗（参照物+尺度比喻）
+Method 1: Directly delete descriptions that might imply the object.
+Method 2: If the object still appears after deletion, add negative instructions at the end of the description.
+Method 3: Replace vague space-type words with more specific spatial descriptions.
 ```
 
-### 模式4：人物面部不好看 / 变形
-
-**症状**：角色面部畸形、不自然、或与参考图差异太大。
-
-**原因分析**：
-- 面部描述过于复杂，AI无法同时满足所有要求
-- 没有提供参考图
-- 光影条件对面部不友好（太暗或太复杂的混合光）
-
-**修正方案**：
+**Example**: Do not want torches
 ```
-策略1：简化面部描述，只保留最核心的1-2个特征
-策略2：上传角色参考图，用"图中[角色]"引用
-策略3：使用有利于面部的光影——侧光/逆光半剪影比正面平光效果好
-策略4：如果是关键帧而非设定图，可以用侧颜/半剪影规避正脸细节
+❌ A dim underground cave hall
+✅ An extremely dark underground abyss hall, without any artificial light sources, only faint blue bioluminescence
 ```
 
-### 模式5：色调不对
+### Mode 3: Insufficient Spatial Depth / Not Grand Enough
 
-**症状**：画面色调与期望不符（太暖/太冷/太饱和/不够饱和）。
+**Symptoms**: Although "grand" was described, the generated space looks small and flat.
 
-**原因分析**：
-- 色调描述不够明确
-- 光源颜色与目标色调矛盾
-- 画风锚定词暗示了不同的色调
+**Root Cause Analysis**:
+- Lack of vertical dimension descriptions (ceiling/dome).
+- Lack of atmospheric perspective (fog, dust).
+- Camera angle is not extreme enough.
+- Lack of reference objects to provide a sense of scale.
 
-**修正方案**：
+**Correction Scheme**:
 ```
-明确色调词：去饱和冷灰蓝 / 血橙深红 / 琥珀暖金 / 冷蓝绿
-确保光源颜色一致：如果要冷色调，光源也应该是蓝色/白色，不能是暖黄
-检查画风锚定：某些画风词自带色调倾向（如Golden Hour自动偏暖）
-```
-
-### 模式6：构图散乱 / 主体不突出
-
-**症状**：画面没有焦点，元素分布杂乱，不知道该看哪里。
-
-**原因分析**：
-- 没有指定构图法则
-- 描述了太多等权重的元素
-- 缺乏景深控制
-
-**修正方案**：
-```
-加入明确构图：人物位于画面[位置]三分之一处 / 中心对称构图
-减少元素：删掉非核心元素，让主体突出
-加入景深：景深极浅，焦点在[主体]上，其余虚化
-指定视觉引导：用[光线/道路/线条]引导视线到主体
+Add: Ceiling towering into the clouds, disappearing into heavy darkness (vertical dimension)
+Add: Extremely dense volumetric fog permeating the air, making the distance misty and ethereal (atmospheric perspective)
+Add: Very low camera angle to highlight the terrifying height of the space (extreme angle)
+Add: Giant biological pillars supporting the darkness like towers of Babel (reference object + scale metaphor)
 ```
 
-### 模式7：材质质感不够 / 太假
+### Mode 4: Character Face Looks Bad / Deformed
 
-**症状**：金属看起来像塑料，皮肤像蜡像，布料像纸板。
+**Symptoms**: The character's face is deformed, unnatural, or differs significantly from the reference image.
 
-**原因分析**：
-- 材质描述太笼统
-- 缺乏微观物理细节
-- 光影不够复杂（缺少反射、次表面散射等）
+**Root Cause Analysis**:
+- Facial description is too complex; the AI cannot satisfy all requirements simultaneously.
+- No reference image was provided.
+- Lighting conditions are unfriendly to faces (too dark or too complex mixed lighting).
 
-**修正方案**：
+**Correction Scheme**:
 ```
-金属：加入"拉丝纹理"、"使用磨损的光泽"、"微氧化痕迹"
-皮肤：加入"毛孔"、"细微的汗珠"、"肤色不均匀的自然红晕"
-布料：加入"编织纹理"、"折叠褶皱"、"边缘的毛边/磨损"
-通用：加入"湿润反光"（所有表面加一层湿润感都会更真实）
-```
-
-### 模式8：生成的图片太平/缺乏层次感
-
-**症状**：画面像一张平面贴图，缺乏空间纵深。
-
-**原因分析**：
-- 缺乏前中远景分层
-- 没有大气透视效果
-- 所有元素处于同一焦平面
-
-**修正方案**：
-```
-加入分层：前景：[虚焦元素]。中景：[主体]。背景：[环境]
-加入大气：空气中弥漫体积雾/尘埃颗粒
-加入景深：指定焦点位置，其余层次自然虚化
-加入光照层次：近处强光远处渐暗，或逆光创造层次
+Strategy 1: Simplify facial descriptions, retaining only 1-2 core features.
+Strategy 2: Upload a character reference image, referencing it with "[Character Name] in the image".
+Strategy 3: Use lighting that flatters the face—side lighting / backlight semi-silhouette yields better results than flat front lighting.
+Strategy 4: If it is a keyframe rather than a setting sheet, use profile views / semi-silhouettes to bypass front-face details.
 ```
 
-### 模式9：CG感过重 / 不像真人
+### Mode 5: Incorrect Color Tone
 
-**症状**：明明想要真人实拍效果，但生成结果像3D建模/CG渲染角色。皮肤过于光滑、打光过于均匀、整体有"数字感"。
+**Symptoms**: The screen tone does not match expectations (too warm / too cold / too saturated / not saturated enough).
 
-**原因分析**：
-- 画风锚定词偏CG方向（如"超写实电影风格"被模型理解为"超写实CG渲染"）
-- 三视图/设定图格式本身是设计/建模概念，模型天然倾向CG输出
-- 缺少摄影类锚定词来拉向真人方向
-- 画质锚定词和画风锚定词之间方向矛盾
+**Root Cause Analysis**:
+- Color tone descriptions are not explicit enough.
+- Light source color contradicts the target color tone.
+- Art style anchors imply a different color tone.
 
-**修正方案**：
+**Correction Scheme**:
 ```
-核心替换：将所有CG方向锚定词替换为真人方向锚定词
-  ❌ 超写实电影风格 / 3A大作3D游戏风格
-  ✅ 真人实拍，电影级摄影，真实皮肤毛孔质感，自然光照
-
-加入真人强化词（按需选用）：
-  + 真实皮肤毛孔质感（强制真人皮肤微观细节）
-  + 自然光照（避免CG式均匀打光）
-  + RAW照片质感（未经后期的原始摄影感）
-  + 电影胶片色彩（胶片感色调）
-
-检查并删除所有CG方向词：
-  删除："大师级CG渲染"、"虚幻引擎5渲染"、"3A游戏"等
+Explicit tone words: Desaturated cold gray-blue / Blood orange deep red / Amber warm gold / Cold blue-green
+Ensure light source colors are consistent: If a cold tone is desired, the light source should also be blue/white, not warm yellow
+Check art style anchors: Certain style words carry inherent tone tendencies (e.g., "Golden Hour" naturally leans warm)
 ```
 
-**实例**：
+### Mode 6: Scattered Composition / Subject Not Prominent
+
+**Symptoms**: The frame has no focus, elements are distributed chaotically, and it's unclear where to look.
+
+**Root Cause Analysis**:
+- No composition rules were specified.
+- Described too many elements of equal weight.
+- Lack of depth of field control.
+
+**Correction Scheme**:
 ```
-❌ 艾尔文角色三视图...画风为超写实电影风格。
-✅ 艾尔文角色三视图...真人实拍，电影级摄影，真实皮肤毛孔质感，自然光照。
-```
-
-### 模式10：真人感过重 / 想要CG但太写实
-
-**症状**：想要3A游戏CG质感，但生成结果过于像真人照片，缺乏CG的精致感和艺术化。
-
-**原因分析**：
-- 画风锚定词偏真人方向
-- 使用了"真人实拍"、"摄影"等锚定词
-- 缺少CG方向的锚定词
-
-**修正方案**：
-```
-核心替换：将真人方向锚定词替换为CG方向锚定词
-  ❌ 真人实拍，电影级摄影
-  ✅ 3A大作3D游戏风格 / 大师级CG渲染
-
-如果要更精致的CG：
-  ✅ 虚幻引擎5渲染，次表面散射皮肤，PBR材质，全局光照
-
-删除所有真人方向词：
-  删除："真人实拍"、"真实皮肤毛孔质感"、"自然光照"、"RAW照片"等
+Add explicit composition: Character located at [position] rule of thirds / Centered symmetrical composition
+Reduce elements: Delete non-core elements to make the subject stand out
+Add depth of field: Extremely shallow depth of field, focus on [subject], with the rest blurred
+Specify visual guidance: Use [light / roads / lines] to guide the eye to the subject
 ```
 
-### 模式11：风格混乱 / 真人和CG之间摇摆
+### Mode 7: Material Texture Insufficient / Too Fake
 
-**症状**：生成结果在真人和CG之间不稳定，同一批生成有的像真人有的像CG，或单张图中部分区域像真人部分像CG。
+**Symptoms**: Metal looks like plastic, skin looks like wax, and fabric looks like cardboard.
 
-**原因分析**：
-- 画风锚定词内部方向矛盾（同时包含真人类和CG类关键词）
-- 画质锚定和画风锚定方向不一致
-- "超写实电影画质"等双义词未被明确的方向词约束
+**Root Cause Analysis**:
+- Material descriptions are too general.
+- Lack of micro-level physical details.
+- Lighting is not complex enough (lacks reflection, sub-surface scattering, etc.).
 
-**修正方案**：
+**Correction Scheme**:
 ```
-诊断：检查提示词中所有画风/画质相关词，标记其方向归属
-  真人方向词：真人实拍、电影级摄影、皮肤毛孔、自然光照、RAW照片
-  CG方向词：3A游戏、CG渲染、虚幻引擎、PBR材质
-  双义词（需注意）：超写实电影画质、电影级调色、8K超清
+Metal: Add "brushed texture", "worn sheen", "micro-oxidation marks"
+Skin: Add "pores", "fine sweat droplets", "natural flush of uneven skin tone"
+Fabric: Add "woven texture", "folds and creases", "frayed/worn edges"
+General: Add "wet reflection" (adding a layer of wetness to all surfaces will look more realistic)
+```
 
-修正：确保所有方向词指向同一方向
-  ❌ 超写实电影画质...3A大作3D游戏风格...真实皮肤毛孔质感
-  ✅ 真人实拍，电影级摄影...真实皮肤毛孔质感，自然光照（全部真人方向）
-  ✅ 大师级CG渲染，8K超清分辨率...3A大作3D游戏风格（全部CG方向）
+### Mode 8: Generated Image Too Flat / Lacking Layering
+
+**Symptoms**: The screen feels like a flat texture map, lacking spatial depth.
+
+**Root Cause Analysis**:
+- Lack of foreground, midground, and background layering.
+- No atmospheric perspective effects.
+- All elements reside on the same focal plane.
+
+**Correction Scheme**:
+```
+Add layering: Foreground: [out-of-focus elements]. Midground: [subject]. Background: [environment]
+Add atmosphere: Volumetric fog / dust particles permeating the air
+Add depth of field: Specify focal point location, allowing other layers to blur naturally
+Add lighting layers: Strong light in the foreground fading in the distance, or use backlighting to create layers
+```
+
+### Mode 9: Excessive CG Feel / Not Looking Like a Real Person
+
+**Symptoms**: Even though real-life photographic effects were desired, the generated result looks like a 3D model / CG rendered character. The skin is overly smooth, lighting is too uniform, and there is an overall "digital feel".
+
+**Root Cause Analysis**:
+- Art style anchors lean toward CG (e.g., "hyper-realistic cinematic style" is interpreted by the model as "hyper-realistic CG rendering").
+- Three-view drawings/setting sheets themselves are design/modeling concepts; the model naturally inclines toward CG outputs.
+- Lack of photographic anchors to pull toward real-life.
+- Directorial contradiction between quality anchors and art style anchors.
+
+**Correction Scheme**:
+```
+Core Replacement: Replace all CG-leaning anchors with real-life photographic anchors
+  ❌ Hyper-realistic cinematic style / 3A game 3D gaming style
+  ✅ Real-life shoot, cinematic photography, real skin pore texture, natural lighting
+
+Add Real-Life Reinforcements (choose as needed):
+  + Real skin pore texture (forces microscopic details of real skin)
+  + Natural lighting (avoids CG-style uniform lighting)
+  + RAW photo texture (unprocessed raw photographic feel)
+  + Cinematic film colors (film-like color tone)
+
+Check and Delete All CG-leaning Words:
+  Delete: "master-class CG rendering", "Unreal Engine 5 render", "3A game", etc.
+```
+
+**Example**:
+```
+❌ Alvin character three-view drawing... style is hyper-realistic cinematic style.
+✅ Alvin character three-view drawing... real-life shoot, cinematic photography, real skin pore texture, natural lighting.
+```
+
+### Mode 10: Excessive Realism / Wanting CG But Too Realistic
+
+**Symptoms**: Desired 3A game CG texture, but the generated result looks too much like a real photo, lacking the refinement and artistry of CG.
+
+**Root Cause Analysis**:
+- Art style anchors lean toward real-life.
+- Used anchors like "real-life shoot", "photography", etc.
+- Lack of CG-leaning anchors.
+
+**Correction Scheme**:
+```
+Core Replacement: Replace real-life anchors with CG anchors
+  ❌ Real-life shoot, cinematic photography
+  ✅ 3A masterpiece 3D game style / Master-class CG rendering
+
+If more refined CG is wanted:
+  ✅ Unreal Engine 5 render, subsurface scattering skin, PBR materials, global illumination
+
+Delete All Real-Life Leaning Words:
+  Delete: "real-life shoot", "real skin pore texture", "natural lighting", "RAW photo", etc.
+```
+
+### Mode 11: Style Mismatch / Oscillating Between Real-Life & CG
+
+**Symptoms**: The generated results are unstable between real-life and CG; some outputs look real, while others look like CG, or certain areas in a single image look real while others look like CG.
+
+**Root Cause Analysis**:
+- Conflicting internal directions in art style anchors (containing both real-life and CG keywords simultaneously).
+- Directional inconsistency between quality anchors and art style anchors.
+- Double-meaning words like "hyper-realistic movie quality" are not constrained by explicit directional words.
+
+**Correction Scheme**:
+```
+Diagnosis: Check all style/quality-related words in the prompt, marking their directional category
+  Real-life directional words: real-life shoot, cinematic photography, skin pores, natural lighting, RAW photo
+  CG directional words: 3A game, CG render, Unreal Engine, PBR materials
+  Double-meaning words (need attention): hyper-realistic movie quality, cinematic color grading, 8K ultra-clear
+
+Correction: Ensure all directional words point in the same direction
+  ❌ Hyper-realistic movie quality... 3A masterpiece 3D game style... real skin pore texture
+  ✅ Real-life shoot, cinematic photography... real skin pore texture, natural lighting (All real-life directions)
+  ✅ Master-class CG rendering, 8K ultra-clear resolution... 3A masterpiece 3D game style (All CG directions)
 ```
 
 ---
 
-## 三、微调技巧
+## III. Fine-Tuning Techniques
 
-### 加词的影响规律
+### Impact Rules of Adding Words
 
-| 加入的词 | 通常的影响 |
+| Added Word | Typical Impact |
 |---------|-----------|
-| "极其"、"极度" | 增强紧跟其后的描述词效果 |
-| "微弱的" | 减弱光源/效果的强度 |
-| "浓厚的" | 增强雾气/烟尘的密度 |
-| "几乎全黑" | 大幅压暗整体画面 |
-| "消失在黑暗中" | 让远处/高处的边界模糊化 |
-| 具体数字（如"60米"） | 帮助AI建立尺度概念 |
-| 画面占比（如"占画面70%"） | 精确控制元素大小 |
+| "extremely", "intensely" | Enhances the effect of the immediately following descriptive words |
+| "faint", "weak" | Weakens the intensity of the light source / effect |
+| "dense", "thick" | Increases the density of fog / smoke |
+| "almost entirely black" | Heavily darkens the overall frame |
+| "disappearing into darkness" | Blurs the boundaries of distant / high areas |
+| Specific numbers (e.g., "60 meters") | Helps AI establish scale concepts |
+| Frame proportion (e.g., "occupies 70% of the screen") | Precisely controls the size of elements |
 
-### 减词的影响规律
+### Impact Rules of Deleting Words
 
-| 删除的词 | 通常的影响 |
+| Deleted Word | Typical Impact |
 |---------|-----------|
-| 删除多余光源描述 | 画面变暗 |
-| 删除具体物体 | 该物体消失（但不一定，AI可能从上下文推断） |
-| 删除色彩形容 | AI自行选择色调（可能不稳定） |
-| 删除构图指示 | AI随机构图（不推荐） |
+| Delete extra light source descriptions | Frame becomes darker |
+| Delete specific objects | Object disappears (but not guaranteed, AI might infer from context) |
+| Delete color adjectives | AI chooses the color tone automatically (can be unstable) |
+| Delete composition instructions | AI randomizes composition (not recommended) |
 
-### 替换词的技巧
+### Word Replacement Tips
 
-| 原词 | 替换为 | 效果变化 |
+| Original Word | Replaced With | Effect Change |
 |------|--------|---------|
-| 昏暗 | 极度昏暗/几乎全黑 | 更暗 |
-| 宏大 | 极其宏大的，天花板高耸入云 | 更有空间感 |
-| 蓝色光 | 微弱的蓝色光源 | 光减弱 |
-| 烟雾 | 极其浓厚的体积雾 | 雾更浓 |
-| 广角 | 广角镜头，极低的视角 | 更极端的透视 |
+| dim | extremely dark / almost entirely black | darker |
+| grand | extremely grand, ceiling towering into the clouds | more sense of space |
+| blue light | faint blue light source | weakened light |
+| smoke/fog | extremely dense volumetric fog | thicker fog |
+| wide-angle | wide-angle lens, very low angle | more extreme perspective |
 
 ---
 
-## 四、迭代工作流
+## IV. Iteration Workflow
 
-### 标准迭代流程
+### Standard Iterative Flow
 
 ```
-1. 首次生成：使用完整提示词
+1. First Generation: Use the complete prompt
    ↓
-2. 评估结果：对比目标画面，找出差距
+2. Evaluate Results: Compare with target visuals, find discrepancies
    ↓
-3. 诊断问题：是哪个维度出了问题？
-   - 色调？光影？构图？主体？环境？材质？
+3. Diagnose Issues: Which dimension is problematic?
+   - Color tone? Lighting? Composition? Subject? Environment? Material?
    ↓
-4. 单变量修改：只修改问题维度的描述
+4. Single-Variable Modification: Only modify descriptions of the problematic dimension
    ↓
-5. 二次生成：观察变化
+5. Second Generation: Observe changes
    ↓
-6. 如果OK → 进入下一个维度的微调
-   如果不OK → 回到步骤3，换一个修改策略
+6. If OK → Move to fine-tuning the next dimension
+   If not OK → Return to Step 3, choose a different modification strategy
    ↓
-7. 超过3次无效修改 → 退一步，检查是否是根本思路的问题
+7. Over 3 Ineffective Modifications → Take a step back, check if it's a fundamental concept issue
 ```
 
-### 快速诊断清单
+### Quick Diagnosis Checklist
 
-当生成结果不理想时，按以下清单逐项排查：
+When generated results are unsatisfactory, troubleshoot item by item using the following checklist:
 
-- [ ] **画风方向对不对？** → 检查画风锚定词是否指向正确方向（真人/CG/引擎级），是否有方向矛盾的词
-- [ ] **画质是否达标？** → 检查画质锚定词是否在最前面
-- [ ] **主体对不对？** → 检查主体描述是否清晰准确
-- [ ] **空间感对不对？** → 检查环境描述的规模和大气效果
-- [ ] **太亮还是太暗？** → 检查光源数量、强度和明暗描述词
-- [ ] **色调对不对？** → 检查色彩描述词和光源颜色
-- [ ] **构图对不对？** → 检查构图指示是否明确
-- [ ] **有没有多余元素？** → 检查是否有描述词暗示了不想要的物体
-- [ ] **材质质感够不够？** → 检查是否有微观物理细节描述
-- [ ] **空间层次够不够？** → 检查是否有前中远景分层和景深控制
+- [ ] **Is the art style direction correct?** → Check if the art style anchors point in the correct direction (real-life/CG/engine grade), and whether there are conflicting directional words.
+- [ ] **Is the quality up to standard?** → Check if quality anchor words are at the very beginning.
+- [ ] **Is the subject correct?** → Check if the subject description is clear and accurate.
+- [ ] **Is the spatial depth correct?** → Check the scale and atmospheric effects of the environment description.
+- [ ] **Too bright or too dark?** → Check light source quantity, intensity, and light/dark descriptive words.
+- [ ] **Is the color tone correct?** → Check color descriptive words and light source colors.
+- [ ] **Is the composition correct?** → Check if composition instructions are explicit.
+- [ ] **Are there unwanted elements?** → Check if any descriptive words imply unwanted objects.
+- [ ] **Is the material texture sufficient?** → Check if there are microscopic physical detail descriptions.
+- [ ] **Is the spatial layering sufficient?** → Check if there is foreground/midground/background layering and depth of field control.
 
 ---
 
-## 五、从失败到成功的实战路径示例
+## V. Real-World Failure-to-Success Path Examples
 
-### 示例：暗黑地下大厅
+### Example: Dark Underground Hall
 
-**目标**：极度昏暗的宏大地下空间，只有微弱蓝光。
+**Target**: Extremely dark, grand underground space with only faint blue light.
 
-**第1次**：
+**Attempt 1**:
 ```
-一个地下洞穴大厅，昏暗，蓝色光。3A游戏风格。
+A dim underground cave hall, blue light. 3A game style.
 ```
-❌ 结果太亮，空间不够大，出现了火把。
+❌ Result is too bright, the space is not big enough, and torches appeared.
 
-**诊断**：描述太简单；"洞穴"暗示了火把；"昏暗"力度不够。
+**Diagnosis**: Description too simple; "cave" implies torches; "dim" is not strong enough.
 
-**第2次**：
+**Attempt 2**:
 ```
-极其宏大的地下深渊大厅，天花板高耸入云。环境极度昏暗，几乎全黑。微弱的蓝色光源。3A游戏大作级画质。
+Extremely grand underground abyss hall, ceiling towering into the clouds. Extremely dark environment, almost entirely black. Faint blue light source. 3A game masterpiece quality.
 ```
-❌ 空间变大了但质感不够，体积感不足。
+❌ Space grew larger, but texture and volume are insufficient.
 
-**诊断**：缺乏大气效果和材质描述。
+**Diagnosis**: Lacks atmospheric effects and material descriptions.
 
-**第3次**：
+**Attempt 3**:
 ```
-极其宏大的地下深渊大厅，天花板高耸入云，消失在浓重的黑暗中。3A游戏大作级画质。环境极度昏暗，几乎全黑。微弱的蓝色光源勾勒出空间宏伟的轮廓。空气中弥漫着极其浓厚的体积雾。墙壁布满湿润的、反光的几丁质甲壳纹理，巨大的生物立柱像通天塔一样支撑着黑暗。广角镜头，极低的视角以凸显空间的恐怖高度。
+Extremely grand underground abyss hall, ceiling towering into the clouds, disappearing into heavy darkness. 3A game masterpiece quality. Extremely dark environment, almost entirely black. Faint blue light source outlining the grand silhouette of the space. Extremely dense volumetric fog permeating the air. Walls covered in wet, reflective chitinous shell textures, giant biological pillars supporting the darkness like towers of Babel. Wide-angle lens, very low angle to highlight the terrifying height of the space.
 ```
-✅ 达到目标效果。
+✅ Achieved target effect.
 
-**关键改进**：加入了体积雾（空间感）、材质描述（质感）、极低视角（高度感）、"消失在黑暗中"（无限延伸感）。
+**Key Improvements**: Added volumetric fog (spatial depth), material description (texture), very low angle (height perception), and "disappearing into darkness" (infinite extension feel).
 
 ---
 
-## 六、版本管理建议
+## VI. Version Management Recommendations
 
-为了避免"越改越差"或"忘了之前的好版本"，建议：
+To avoid "getting worse as you edit" or "forgetting previously successful versions", it is recommended to:
 
-1. **给每个提示词编号**：v1、v2、v3...
-2. **记录每次修改了什么**：v2 vs v1 = 加入了体积雾描述
-3. **标记满意度**：★★★☆☆
-4. **保留最佳版本**：随时可以回退到之前的最佳状态
-5. **记录成功模式**：某个描述组合效果好，记录下来作为未来的模板
+1. **Number each prompt**: v1, v2, v3...
+2. **Record what was modified each time**: v2 vs v1 = added volumetric fog description
+3. **Mark satisfaction**: ★★★☆☆
+4. **Retain the best version**: Ready to roll back to previous optimal states at any time
+5. **Record successful patterns**: If a certain combination of descriptions yields excellent results, document it as a template for the future.

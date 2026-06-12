@@ -1,1267 +1,1123 @@
-# TVC 分镜与视频工程知识库
+# TVC Storyboard & Video Engineering Knowledge Base
 
-> **职责**：分镜与拍摄阶段的唯一参考。覆盖多宫格分镜、视频提示词语法、产品电影化拆解和品牌世界镜头。多宫格和视频提示词是配套交付物——每张多宫格对应一段视频提示词。
-> **不管**：创意策略（查 treatment.md）、图片提示词句法（查 shot-language.md）、输出格式与迭代（查 delivery.md）。
-
----
-
-## Part 1: 多宫格分镜
+> **Responsibility**: The sole reference for storyboarding and filming stages. Covers multi-grid storyboards, video prompt syntax, cinematic product breakdowns, and brand world shots. Multi-grids and video prompts are matching deliverables—each multi-grid corresponds to a segment of video prompts.
+> **Out of Scope**: Creative strategies (refer to [treatment.md](treatment.md)), image prompt syntax (refer to [shot-language.md](shot-language.md)), output formats and iterations (refer to [delivery.md](delivery.md)).
 
 ---
 
-## 一、多宫格提示词四层结构
-
-一条完整的多宫格提示词由四层组成，按以下顺序排列：
-
-### 第一层：全局风格
-
-定义整张图的视觉基调和物理格式。必须包含：
-
-- **网格声明**：`生成一张包含N个分镜的组合图，按RxC网格排列`
-- **画风锚定**：与 Phase 3 确认的画风方向一致（参考 `art-style-library.md`）
-- **画面比例**：整张多宫格图的比例（通常 16:9 或 1:1）
-- **渲染/拍摄系统**（可选）：如 `由ARRI Alexa电影摄影机拍摄` 或 `虚幻引擎5实时渲染`，用于锁定画面质感
-
-示例写法：
-> 生成一张包含9个分镜的组合图，按3x3网格排列。3D奇幻动画风格，由ARRI Alexa电影摄影机拍摄，16:9横屏。
-
-### 第二层：参考图映射
-
-当使用 `edit` 模式引用 Phase 4 资产图时，在此层建立映射关系。
-
-格式：`(图1)[资产类型/名称], (图2)[资产类型/名称]...`
-
-如果无参考图（纯文生图），跳过此层，在第一层中用文字描述角色/环境的关键外观特征。
-
-### 第三层：叙事主线 + 逐格描述
-
-这是多宫格提示词的核心。写法随**剧情密度**变化——详见第四节。
-
-### 第四层：一致性锚
-
-在全部逐格描述之后，追加全局一致性要求：
-
-- **风格统一**：`保持整体风格统一`（必须有）
-- **视觉母题**：贯穿全部面板的反复出现元素（如某个颜色、某种光效、某个道具）
-- **色调连续性**：描述跨面板的色彩/光影渐变趋势
-- **角色一致**：如有角色跨格出现，强调外观不可变化
-- **视频流**：简述 9 格如何作为视频流动——运镜轨迹、产品状态变化、关键转场点（如 `视频流：全景引入(P1)→弧形绕瓶(P2-P3)→微距潜入(P4)→...→定格(P9)`）。这不是给图片生成模型看的指令，而是给下游视频提示词写作用的思维锚点
+## Part 1: Multi-Grid Storyboards
 
 ---
 
-## 二、视频脉络先行
+## I. Multi-Grid Prompt Four-Layer Structure
 
-多宫格不是 9 张美图的拼盘——它是从一条 15 秒视频中冻结出来的 9 个关键帧。**先有流，再有帧。**
+A complete multi-grid prompt consists of four layers, ordered as follows:
 
-### 核心原则
+### Layer 1: Global Style
 
-写逐格描述之前，先用 1-2 句话勾勒这 15 秒的**视频脉络**：镜头语言怎么连续、产品状态怎么变、画面之间怎么衔接。视频脉络是时间轴上的因果链——每格承接什么、过渡到什么——而不只是"9 格放在一起好看"。
+Defines the visual tone and physical format of the entire image. Must include:
 
-视频脉络**不等于一镜到底**。它可以包含硬切、匹配剪辑、溶解、跳切等各种转场——关键是镜头语言的连续性，而非镜头物理上的连续运动。一镜到底是一种选择，多镜头剪辑也是一种选择，但每个格子都必须知道自己在时间轴上的位置。
+- **Grid Declaration**: `Generate an image containing N storyboard panels, arranged in a RxC grid`
+- **Art Style Anchor**: Consistent with the art style direction confirmed in Phase 3 (refer to `art-style-library.md`)
+- **Aspect Ratio**: Aspect ratio of the entire multi-grid image (typically 16:9 or 1:1)
+- **Rendering / Shooting System** (optional): E.g., `shot on ARRI Alexa cinematic camera` or `real-time rendered in Unreal Engine 5`, used to lock in image quality
 
-多宫格是视频脉络的**冻结**，视频提示词是视频脉络的**展开**。两者从同一条脉络生长，不存在"先做图再配视频"的先后关系。
+Example Writing:
+> Generate an image containing 9 storyboard panels, arranged in a 3x3 grid. 3D fantasy animation style, shot on ARRI Alexa cinematic camera, 16:9 widescreen.
 
-### 三种密度，同一原则
+### Layer 2: Reference Image Mapping
 
-- **高密度**的"叙事主线"天然就是视频脉络——角色动作穿格流动，时间因果内嵌在叙事中
-- **中密度**的"旅程概述"接近视频脉络——场景递进本身包含时间流
-- **低密度没有故事，但必须有视频脉络**——镜头语言的连续性、光影变化、产品状态转换就是低密度的时间因果。"无叙事弧线"不等于"无时间流"
+When using `edit` mode to reference Phase 4 asset images, establish mapping relationships in this layer.
 
-### 视频脉络的写法（低密度示例）
+Format: `(Image 1)[Asset Type/Name], (Image 2)[Asset Type/Name]...`
 
-在逐格描述之前，加一行视频脉络：
+If there are no reference images (pure text-to-image), skip this layer and describe the key appearance features of the character/environment in text within Layer 1.
 
-> 视频脉络：缓推入阳台全景→桌面静物画→侧面低角度穿透瓶身焦散→逆光帘布前瓶身剪影→猫抬头与前景虚化瓶身的琥珀色呼应→俯拍桌面静物锚点→瓶盖微距→栏杆上瓶身与远景→她走来，桌上瓶身在远端
+### Layer 3: Narrative Line + Grid-by-Grid Descriptions
 
-这段脉络里，P5 的猫有明确的时间位置：它承接 P4 的逆光氛围，前景虚化瓶身提供产品存在感，过渡到 P6 的俯拍总览。每格知道自己从哪来、到哪去。
+This is the core of the multi-grid prompt. The writing style varies with plot density—see Section IV for details.
 
-### 视频脉络不是提示词的一部分
+### Layer 4: Consistency Anchor
 
-视频脉络是写作前的**思维步骤**，不是输出给图片生成模型的文本。它可以写在第四层一致性锚的"视频流"注释中（给下游视频提示词参考），但不会出现在第一至第三层的提示词正文中。
+After all grid-by-grid descriptions, append global consistency requirements:
 
-### 动态特效的分工
-
-当创意方案包含动态视觉特效（材质变形、粒子汇聚、能量流动等）时：**多宫格只冻结特效的结果态，视频提示词描述特效的完整过程。** 多宫格是静态关键帧，无法表达"变化"——硬写过程只会让画面混乱。
-
-| 动态概念 | 多宫格（冻结结果态） | 视频提示词（描述完整过程） |
-|---------|-------------------|----------------------|
-| 液态金属凝结成产品 | 产品已完整成型 | 液态金属流动→减速→凝结→表面纹理渐变→成型 |
-| 产品悬浮拆解 | 组件已分离的爆炸视图 | 组件缓慢分离、悬浮、能量线连接的动画 |
-| 屏幕点亮 | 屏幕已亮，显示界面 | 像素点从中心亮起→波纹扩散→界面元素浮现 |
-| 粒子汇聚成型 | 产品已完整呈现 | 粒子从四面八方汇聚→轮廓显现→表面凝固 |
-| 水珠在鞋面滚落 | 水珠凝在鞋面某处 | 水珠沿面料滑动→证明防水性能 |
-| 液体被碰洒（咖啡/红酒） | 液体已悬浮在空中，形成凝固的弧形液柱 | 杯被碰倒→液体飞出→在空中凝固→被接住/扶正 |
-| 人物被"冻结" | 人物保持行走/动作姿态静止不动，衣角悬停 | 所有人突然停止运动→环境声消失→只有主角自由活动 |
-| 纸张/碎片风暴 | 纸张以各种角度悬停在空中不动 | 风起→纸张翻飞→骤然静止悬浮→被逐张取走 |
+- **Style Unity**: `Keep overall style consistent` (must have)
+- **Visual Motif**: Elements that repeatedly appear throughout all panels (e.g., a certain color, a certain lighting effect, a certain prop)
+- **Color Tone Continuity**: Describes the color/lighting gradient trends across panels
+- **Character Consistency**: If characters appear across multiple grids, emphasize that their appearance must not change
+- **Video Stream**: Brief summary of how the 9 grids flow as a video—camera movement trajectories, product state changes, key transition points (e.g., `Video Stream: Panorama entry (P1) -> Arc around bottle (P2-P3) -> Macro dive (P4) -> ... -> Freeze frame (P9)`). This is not a command for the image generation model, but a cognitive anchor for downstream video prompt writing.
 
 ---
 
-## 三、网格规格选择策略
+## II. Video Thread First
 
-| 规格 | 格数 | 时长覆盖 | 适用场景 |
-|------|------|---------|---------|
-| **3x3** | 9格 | ≈15秒 | 标准叙事段落、产品宣传完整流程、最常用 |
-| **2x2** | 4格 | ≈5-8秒 | 短转场序列、精简片段、片头/片尾 |
-| **2x3** | 6格 | ≈10秒 | 中等密度叙事、竖版视频 |
-| **3x2** | 6格 | ≈10秒 | 横版中等密度 |
+Multi-grids are not a platter of 9 beautiful images—they are 9 keyframes frozen from a 15-second video. **Flow first, then frames.**
 
-选择原则：默认 **3x3**；内容不足 6 帧时用 **2x2** 或 **2x3**；竖版偏好 **2x3**，横版偏好 **3x2** 或 **3x3**。
+### Core Principles
+
+Before writing grid-by-grid descriptions, outline the 1-2 sentence **video thread** of these 15 seconds: how the camera language is continuous, how the product state changes, and how frames connect. The video thread is the causal chain on the timeline—what each grid inherits, what it transitions to—not just "9 grids looking good together".
+
+The video thread **is not equivalent to a single long take**. It can include hard cuts, match cuts, dissolves, jump cuts, and various transitions—the key is the continuity of the camera language, not the physical continuous movement of the camera. A single long take is a choice, and multi-shot editing is another choice, but each grid must know its position on the timeline.
+
+Multi-grids are the **freezing** of the video thread, and video prompts are the **expansion** of the video thread. Both grow from the same thread; there is no sequence of "generating images first then matching video".
+
+### Three Densities, Same Principle
+
+- **High Density** "narrative lines" are naturally the video thread—character actions flow across grids, and temporal causality is embedded in the narrative.
+- **Medium Density** "journey overviews" approach the video thread—scene progression itself contains a temporal flow.
+- **Low Density has no story, but must have a video thread**—camera language continuity, lighting changes, and product state transitions are the temporal causalities of low density. "No narrative arc" does not equal "no temporal flow".
+
+### Video Thread Writing (Low Density Example)
+
+Before the grid-by-grid descriptions, add a line for the video thread:
+
+> Video Thread: Slow push into balcony panorama -> tabletop still life -> side low-angle penetrating bottle caustic -> silhouette of bottle in front of backlit curtain -> cat looking up echoing with the amber color of the out-of-focus bottle in the foreground -> high-angle shot of tabletop still life anchor -> bottle cap macro -> bottle on railing with distant view -> she walks over, bottle on the table in the background
+
+### Video Thread is Not Part of the Prompt
+
+The video thread is a **cognitive step** before writing, not a text output to the image generation model. It can be written in the "Video Stream" annotation of Layer 4's consistency anchor (for downstream video prompt reference), but it will not appear in the main prompt text of Layers 1 to 3.
+
+### Division of Labor for Dynamic Special Effects
+
+When the creative pitch includes dynamic visual special effects (material deformation, particle aggregation, energy flow, etc.): **multi-grids only freeze the final state of the effects, while video prompts describe the complete process of the effects.** Multi-grids are static keyframes and cannot express "change"—forcing process descriptions will only clutter the image.
+
+| Dynamic Concept | Multi-Grid (Freeze Final State) | Video Prompt (Describe Complete Process) |
+|------|------|------|
+| Liquid metal condensing into product | Product fully formed | Liquid metal flowing -> decelerating -> condensing -> surface texture changing -> forming |
+| Product suspended disassembly | Exploded view with separated components | Components slowly separating, hovering, connected by energy lines animation |
+| Screen lighting up | Screen lit, displaying interface | Pixels lighting up from center -> waves diffusing -> interface elements emerging |
+| Particles aggregating into form | Product fully presented | Particles aggregating from all directions -> silhouette emerging -> surface solidifying |
+| Water droplets rolling down shoe upper | Water droplets condensing on a certain spot of shoe upper | Water droplets sliding along fabric -> proving waterproof performance |
+| Liquid spilled (coffee/wine) | Liquid suspended in mid-air, forming a frozen curved liquid column | Cup knocked over -> liquid flying out -> solidifying in mid-air -> caught/straightened |
+| Character "frozen" | Character stays in walking/motion posture still, clothing corners suspended | Everyone suddenly stops moving -> environmental sound disappears -> only the protagonist moves freely |
+| Paper/fragment storm | Papers suspended in mid-air at various angles still | Wind rising -> papers fluttering -> suddenly stopping and hovering -> taken away sheet by sheet |
 
 ---
 
-## 四、剧情密度光谱：逐格描述的写法
+## III. Grid Specification Selection Strategy
 
-多宫格的核心差异在于**剧情密度**——角色动作/故事推进占多少比重 vs 摄影指令/视觉设计占多少比重。
+| Specification | Grids | Duration Coverage | Applicable Scenario |
+|------|-----------|-------------|------|
+| **3x3** | 9 grids | ≈15 seconds | Standard narrative segments, complete product promo flow, most common |
+| **2x2** | 4 grids | ≈5-8 seconds | Short transition sequences, simplified clips, opening/closing |
+| **2x3** | 6 grids | ≈10 seconds | Medium density narrative, vertical video |
+| **3x2** | 6 grids | ≈10 seconds | Horizontal medium density |
 
-**TVC 密度声明**：TVC 广告只使用**低密度**和**中密度**两种模式，低密度为默认。高密度模式（景别交给 AI 判断）不适用于 TVC——广告的每一帧都需要精确的美学控制，不可将构图决策权交给 AI。
+Selection Principle: Default to **3x3**; use **2x2** or **2x3** when content is less than 6 frames; vertical prefers **2x3**, horizontal prefers **3x2** or **3x3**.
 
-### 4.1 中密度：场景递进
+---
 
-**特征**：有叙事推进（旅程/过程），但每格也是相对独立的场景。动作与摄影指令混合。
+## IV. Plot Density Spectrum: Grid-by-Grid Description Writing
 
-**写法**：先写一句叙事主线概括旅程，然后逐格描述。景别可写可不写。
+Multi-grids' core difference lies in **plot density**—how much weight character actions/story progression occupy vs. how much weight camera instructions/visual design occupy.
 
-**完整示例**（牧场清晨·走进牧场）：
+**TVC Density Statement**: TVC commercials only use **Low Density** and **Medium Density** modes, with low density as the default. High density mode (letting the AI decide shot size) does not apply to TVCs—every single frame of the commercial requires precise aesthetic control; composition decisions must not be left to the AI.
+
+### 4.1 Medium Density: Scene Progression
+
+**Characteristics**: Has narrative progression (journey/process), but each grid is also a relatively independent scene. Mixed actions and camera instructions.
+
+**Writing Style**: First write a narrative line summarizing the journey, then describe grid by grid. Shot sizes are optional.
+
+**Complete Example (Pasture Morning · Entering the Pasture)**:
 
 ```
-生成一张包含9个分镜的组合图，按3x3网格排列。
-真人实拍，电影级摄影，自然光照，16:9横屏。
+Generate an image containing 9 storyboard panels, arranged in a 3x3 grid.
+Real-life shoot, cinematic photography, natural lighting, 16:9 widescreen.
 
-叙事线：黎明前的高山牧场，牧场主独自起身、出门、穿过薄雾走向牛群的完整清晨。
-色调从第1格的冷蓝灰逐渐过渡至第9格的暖金绿，模拟晨光照亮牧场的过程。
+Narrative Line: A complete early morning of a mountain pasture before dawn, with the pasture owner getting up alone, going out, and walking through the thin mist toward the cattle herd.
+The color tone gradually transitions from cold blue-gray in Panel 1 to warm golden-green in Panel 9, simulating the process of morning light illuminating the pasture.
 
-1. 连绵丘陵被蓝灰薄雾笼罩，天空从深蓝渐变为微金。画面最底部，木屋窗户透出的橘黄灯光是唯一暖色。
-2. 牧场主粗糙的双手在昏黄灯光下拧开老式黄铜水龙头，清水冲过指缝，水珠沿粗粝皮肤滚动。
-3. 薄雾中木栅栏消失在远处，栅栏上凝结水珠，一只旧皮手套搭在横杆上——他刚经过这里。
-4. 低角度跟随旧棕色皮靴踩过湿草地，每一步草叶弯折、露珠飞溅弹起。光线逐渐变暖。
-5. 牧场主推开牛棚厚重木门，金色晨光从门缝涌入形成放射状光柱，照亮空气中飞舞的微尘。
-6. 蛛网上的露珠被涌入的晨光照亮，丝线如银弦闪烁。一颗露珠受到微振缓缓滑落。
-7. 金色丁达尔光柱穿透浓雾照亮前景草地，光柱中细微尘粒飘浮。雾气深处，穿工装外套的人影剪影正朝牧场深处走去。
-8. 橡树枝叶间隙透出金色晨光，叶片边缘半透明金绿色。树下阴影处一个锃亮金属奶桶，桶壁反射一道暖光。
-9. 牧场全景，薄雾散开，金色阳光铺满草场。远处牧场主的身影已走到牛群附近，人与牛被暖光勾勒出金色边缘。
+1. Rolling hills shrouded in blue-gray thin mist, the sky transitioning from deep blue to faint gold. At the very bottom of the frame, the orange lamp light shining through the window of the log cabin is the only warm color.
+2. The pasture owner's rough hands turning on an old brass tap under dim yellow light, clean water washing through the finger gaps, water droplets rolling along the rough skin.
+3. The wooden fence disappearing into the distance in thin mist, water droplets condensing on the fence, an old leather glove slung on the horizontal bar—he just passed here.
+4. Low angle tracking the old brown leather boots stepping on wet grass, with grass blades bending and dew drops splashing and bouncing at each step. The light gradually turns warmer.
+5. The pasture owner pushing open the heavy wooden door of the cowshed, golden morning light pouring from the door crack forming radial rays, illuminating fine dust dancing in the air.
+6. Dew drops on a cobweb illuminated by the pouring morning light, silk threads shimmering like silver strings. A dew drop slowly sliding down under slight vibration.
+7. Golden Tyndall rays penetrating dense fog to illuminate the foreground grass, fine dust particles floating in the light beams. In the depths of the fog, the silhouette of a person in a work jacket is walking toward the deep pasture.
+8. Golden morning light filtering through the gaps of oak branches and leaves, the leaf edges translucent golden-green. A shiny metal milk pail in the shadow under the tree, its wall reflecting a warm light.
+9. Pasture panorama, thin mist dispersing, golden sunlight covering the pasture. In the distance, the figure of the pasture owner has walked near the cattle herd, both human and cattle outlined with golden edges by the warm light.
 
-保持整体风格统一。视觉母题：牧场主的"手"和"足迹"贯穿全部面板。
-丁达尔光柱和草尖露珠作为环境线索反复出现。电影级调色。
+Keep overall style consistent. Visual motif: the pasture owner's "hands" and "footsteps" run throughout all panels.
+Tyndall rays and grass tip dew drops appear repeatedly as environmental clues. Cinematic color grading.
 ```
 
-### 4.2 低密度：视觉驱动（TVC 默认）
+### 4.2 Low Density: Visual-Driven (TVC Default)
 
-**特征**：无叙事弧线，但有**视频脉络**——每格是从一条镜头语言连续的视频中提取的关键帧，而非独立的视觉设计。纯产品/氛围展示，精确的摄影指令。
+**Characteristics**: No narrative arc, but has a **video thread**—each grid is a keyframe extracted from a video with continuous camera language, rather than an independent visual design. Pure product/atmosphere display, precise camera instructions.
 
-**写法**：先写一句**视频脉络**（镜头语言的连续性 + 产品状态流），再逐格描述。每格以 `[景别·视角]` 开头，精确指定镜头语言、光影设计、产品角度。
+**Writing Style**: First write a **video thread** (camera language continuity + product state flow), then describe grid by grid. Each grid begins with `[Shot Size · Angle]`, precisely specifying camera language, lighting design, and product angle.
 
-**完整示例**（香水广告·多角度光影展示）：
+**Complete Example (Perfume Commercial · Multi-Angle Light and Shadow Display)**:
 
 ```
-生成一张包含9个分镜的组合图，按3x3网格排列。
-以图1的香水产品作为主体，纯黑背景，暖金侧光+白色烟雾，奢华质感。
+Generate an image containing 9 storyboard panels, arranged in a 3x3 grid.
+With the perfume product of Image 1 as the subject, pure black background, warm gold side light + white smoke, luxury texture.
 
-视频脉络：全景引入→旋转展示棱面→推进穿过烟雾→远景烟雾包裹→微距铭牌→上升穿雾→晃动光影→冷暖交替扫光→落回定格
+Video Thread: Panorama entry -> rotate to display facets -> push through smoke -> wide shot engulfed in smoke -> macro nameplate -> rising through smoke -> shaking light and shadow -> warm/cold alternating scan light -> fall back to freeze frame
 
-1. 大广角全景·俯拍：深棕琥珀方瓶香水静置于纯黑背景中央，暖金侧光扫过瓶身，白色烟雾从瓶身缝隙缓缓升腾，琥珀色液体微晃，凸显乌木沉香的厚重温润质感。
-2. 近景·侧仰：香水瓶缓慢顺时针旋转30°，棱面反射纯黑背景与缭绕烟雾，金色铭牌被聚光打亮，烟雾随瓶身转动缠绕瓶壁。
-3. 中景·平视：香水瓶向镜头缓慢推进，烟雾随推进速度弥漫扩散，暖光渐变为深金暖调，光影在烟雾与瓶身间形成层叠暖晕。
-4. 远景·斜侧：香水瓶被白色烟雾半包裹，暖金侧光渐变为黄昏深金调，琥珀液体在光影中轻晃，烟雾如墨纹般摇曳。
-5. 近特写·俯拍：聚光锁定金色铭牌文字，烟雾在字样上闪烁跳跃，背景纯黑与烟雾完全虚化，突出沉香的厚重高级感。
-6. 全景·仰拍：香水瓶缓缓上升穿过烟雾间隙，上方暖光渐变为柔金，瓶身折射温润光泽，光影从锐利转为柔和。
-7. 中景·侧拍：香水瓶轻微左右晃动，烟雾随晃动形成波浪状涌动，瓶身棱面快速切换明暗。
-8. 近景·平视：香水瓶静止于背景中央，暖金与冷黑光线交替扫过瓶身，先暖光凸显木质温润，再冷光凸显玻璃通透。
-9. 全景·斜俯视：香水瓶缓缓落回画面中央，暖金柔光包裹瓶身，烟雾逐渐消散，光影归于柔和静谧。
+1. Wide angle panorama · High angle: A square amber bottle of perfume sits at the center of a pure black background, warm gold side light sweeps over the bottle, white smoke rises slowly from the bottle crevices, the amber liquid shakes slightly, highlighting the heavy and warm texture of agarwood.
+2. Close-up · Side low angle: The perfume bottle slowly rotates clockwise 30°, facets reflecting the pure black background and lingering smoke, the golden nameplate illuminated by a spotlight, smoke wrapping the bottle wall as it turns.
+3. Medium shot · Eye level: The perfume bottle slowly pushes toward the camera, smoke diffusing and dispersing with the push speed, warm light gradually shifting to deep golden warm tone, lighting forming layered warm halos between smoke and bottle body.
+4. Wide shot · Side angle: The perfume bottle is half-wrapped by white smoke, warm gold side light gradually shifts to dusk deep gold tone, amber liquid shakes gently in light and shadow, smoke swaying like ink ripples.
+5. Extreme close-up · High angle: Spotlight locks onto the golden nameplate text, smoke flickering and dancing on the lettering, background pure black and smoke completely blurred, highlighting the heavy premium feel of agarwood.
+6. Panorama · Low angle: The perfume bottle slowly rises through the gaps of smoke, the warm light above gradually shifts to soft gold, the bottle body refracting a warm luster, lighting shifting from sharp to soft.
+7. Medium shot · Side view: The perfume bottle shakes slightly left and right, smoke forming wave-like surges with the shaking, the bottle body facets rapidly switching between light and dark.
+8. Close-up · Eye level: The perfume bottle rests at the center of the background, warm gold and cold black lights sweep over the bottle alternately, warm light first highlighting the wood warmth, then cold light highlighting the glass transparency.
+9. Wide angle · Side high angle: The perfume bottle slowly falls back to the center of the screen, warm gold soft light wraps the bottle body, smoke gradually dissipating, lighting returning to soft and serene.
 
-保持整体风格统一。光影弧线：暖金→深金→冷黑→暖金循环。
-烟雾作为贯穿全部面板的视觉母题。
-视频流：全景引入(P1)→旋转展示(P2)→推进穿雾(P3)→远景笼罩(P4)→微距铭牌(P5)→上升突破(P6)→晃动节奏(P7)→冷暖交替(P8)→落回定格(P9)。
+Keep overall style consistent. Light and shadow arc: warm gold -> deep gold -> cold black -> warm gold cycle.
+Smoke as a visual motif running throughout all panels.
+Video Stream: Panorama entry (P1) -> rotate display (P2) -> push through smoke (P3) -> wide shot engulfed (P4) -> macro nameplate (P5) -> rise break (P6) -> shaking rhythm (P7) -> warm/cold alternate (P8) -> fall back freeze (P9).
 ```
 
-### 4.3 密度对比速查
+### 4.3 Density Comparison Quick Reference
 
-| 维度 | 中密度 | 低密度（TVC 默认） |
+| Dimension | Medium Density | Low Density (TVC Default) |
 |------|--------|--------|
-| 叙事主线 | 建议（1句旅程概述） | **视频脉络**（1-2句镜头语言连续性/产品状态流） |
-| 景别指定 | 可写可不写 | 必须写，每格开头 |
-| 每格驱动力 | 场景+动作混合 | 摄影指令 |
-| 格间关系 | 主题线索串联 | **视频脉络驱动的视觉节奏** |
-| 每格长度 | 2-3句 | 2-4句 |
+| Narrative Main Line | Recommended (1-sentence journey overview) | **Video Thread** (1-2 sentences of camera language continuity / product state flow) |
+| Shot Size Specification | Optional | **Must write**, at the beginning of each grid |
+| Driving Force per Grid | Mixed scene + action | Camera instructions |
+| Inter-grid Relationship | Theme clue connection | **Visual rhythm driven by video thread** |
+| Length per Grid | 2-3 sentences | 2-4 sentences |
 
-### 4.4 同一项目中混合密度
+### 4.4 Mixed Density in the Same Project
 
-一个项目的不同 grid 可以选不同密度。TVC 默认全部低密度。
+Different grids in a project can use different densities. TVC defaults to all low density.
 
-| 项目类型 | G1 | G2 | G3 | G4 |
+| Project Type | G1 | G2 | G3 | G4 |
 |---------|----|----|----|----|
-| **TVC 产品广告** | **低（产品+场景建立）** | **低（产品展示/交叉）** | **低（细节+高潮）** | **低（收束定格）** |
-| 品牌故事片 | 中（角色开场） | 低/中（产品旅程） | 低（产品展示） | 低（收束定格） |
+| **TVC Product Ad** | **Low (Product + Scene Establish)** | **Low (Product Display / Cross)** | **Low (Details + Climax)** | **Low (Ending Freeze Frame)** |
+| Brand Story Film | Medium (Character Opening) | Low/Medium (Product Journey) | Low (Product Display) | Low (Ending Freeze Frame) |
 
 ---
 
-## 五、通用写作规范（所有密度共享）
+## V. General Writing Specifications (Shared by All Densities)
 
-### 5.1 叙事弧线编排
+### 5.1 Narrative Arc Choreography
 
-9 格的标准节奏：
+Standard rhythm for 9 grids:
 
-| 位置 | 1-3格 | 4-6格 | 7-8格 | 9格 |
+| Position | Grids 1-3 | Grids 4-6 | Grids 7-8 | Grid 9 |
 |------|-------|-------|-------|-----|
-| 功能 | 建立 | 发展 | 高潮 | 余韵/收束 |
+| Function | Establish | Development | Climax | Ending / Resolution |
 
-4 格叙事：建立 → 发展 → 高潮 → 收束，各一格。
+4-grid narrative: Establish -> Development -> Climax -> Resolution, one grid each.
 
-### 5.2 光影弧线
+### 5.2 Light and Shadow Arc
 
-跨面板的光影应形成连续的氛围流动：明暗递进、色温漂移、高潮格设置最强烈光影反差。中密度中光影可融入叙事描述，低密度中必须每格明确指定。
+Light and shadow across panels should form a continuous flow of atmosphere: light/dark progression, color temperature drift, with the climax grid featuring the strongest light and shadow contrast. In medium density, light and shadow can be integrated into narrative descriptions, while in low density, they must be explicitly specified for each grid.
 
-### 5.3 视觉母题
+### 5.3 Visual Motifs
 
-设计 1-2 个贯穿全部面板的视觉元素。母题可以是：一种光效、一个道具、一种色彩、一种构图手法。
-
----
-
-## 六、与 Phase 4 资产图的配合
-
-### 文生图模式（无资产参考）
-
-将角色/产品的外观特征写入第一层全局风格中：
-
-> 主角：身着黑色铠甲的年轻女战士，银色长发，手持弯刀，右脸有一道疤痕。
-
-### 图生图模式（引用资产图）
-
-在 Nano Banana Pro 中使用 edit 模式并上传资产图：
-- 第一层正常写全局风格
-- 第二层映射资产图：`(图1)女战士角色三视图, (图2)雪山环境概念`
-- 第三层逐格描述中直接引用：`图1中的女战士站在图2的雪山峰顶...`
+Design 1-2 visual elements that run throughout all panels. The motif can be: a certain lighting effect, a certain prop, a certain color, or a certain composition method.
 
 ---
 
-## 七、多张网格的规划策略
+## VI. Coordination with Phase 4 Asset Images
 
-将视频按 15 秒为单位切割，每段对应一张 3x3 网格。**每张 grid 独立选择剧情密度**。
+### Text-to-Image Mode (No Asset Reference)
 
-### 跨网格一致性
+Write the appearance features of characters/products in Layer 1 (Global Style):
 
-- **全局风格**：所有网格使用完全相同的第一层
-- **参考图映射**：所有网格引用同一组资产图
-- **衔接过渡**：前一张网格的第 9 格氛围 ≈ 后一张网格的第 1 格氛围
-- **色彩连续**：跨网格的色温变化保持渐进，不突变
+> Protagonist: A young female warrior in black armor, long silver hair, holding a scimitar, with a scar on her right cheek.
+
+### Image-to-Image Mode (Referencing Asset Images)
+
+Use `edit` mode in Nano Banana Pro and upload asset images:
+- Layer 1 writes global style normally
+- Layer 2 maps asset images: `(Image 1) female warrior character three-view, (Image 2) snow mountain environmental concept`
+- Layer 3 grid-by-grid descriptions reference them directly: `The female warrior in Image 1 stands on the summit of the snow mountain in Image 2...`
 
 ---
 
-## 八、拆分单帧的提示词模板
+## VII. Planning Strategy for Multiple Grids
 
-当下游视频模型不支持多宫格输入时，逐格拆分：
+Slice the video in units of 15 seconds, with each segment corresponding to a 3x3 grid. **Each grid independently chooses its plot density.**
+
+### Cross-Grid Consistency
+
+- **Global Style**: All grids use the exact same Layer 1
+- **Reference Image Mapping**: All grids reference the same set of asset images
+- **Transition**: The atmosphere of Grid N's panel 9 ≈ Grid N+1's panel 1 atmosphere
+- **Color Continuity**: Color temperature changes across grids remain progressive, with no sudden jumps
+
+---
+
+## VIII. Prompt Template for Splitting Single Frames
+
+When downstream video models do not support multi-grid input, split grid by grid:
 
 ```
-单独生成【第X行第Y列】的分镜图像，保持与原图完全一致的风格和角色外观
+Separately generate the storyboard image of [Row X, Column Y], maintaining the style and character appearance completely consistent with the original image
 ```
 
-在 Nano Banana Pro 中使用 edit 模式，上传多宫格原图作为参考图。按阅读顺序逐格拆分。
+Use `edit` mode in Nano Banana Pro, uploading the original multi-grid image as the reference image. Split grid by grid in reading order.
 
 ---
 
-## 九、TVC 多宫格专用写法
+## IX. TVC-Specific Multi-Grid Writing Styles
 
-TVC 广告的多宫格分镜在通用写法基础上，需要额外处理**产品世界与品牌世界的交织**、**End Frame 的收束**以及**跨网格产品一致性**。
+TVC commercial multi-grids, based on the general writing style, require additional handling of **interweaving product and brand worlds**, **resolving the End Frame**, and **maintaining product consistency across grids**.
 
 ---
 
-### 9.1 产品世界 Grid 写法
+### 9.1 Product World Grid Writing
 
-**定位**：低密度（视觉驱动），每格以 `[景别·视角]：` 精确开头。
+**Positioning**: Low Density (visual-driven), each grid beginning precisely with `[Shot Size · Angle]:`.
 
-**写法要点**：
-- 产品角度按逻辑编排：从整体到局部，从外观到内部，从静态到功能态
-- 光影系统全局统一，仅在色温/强度上做微变
-- 背景极度克制：纯色渐变或纯黑
-- 材质关键词保持一致
+**Key Writing Points**:
+- Product angles arranged logically: from whole to part, from exterior to interior, from static to functional state
+- Unified global lighting system, with only subtle changes in color temperature/intensity
+- Restrained background: solid color gradient or pure black
+- Material keywords kept consistent
 
-**完整示例**（运动相机·产品世界 9 宫格）：
+**Complete Example (Action Camera · Product World 9-Grid)**:
 
 ```
-生成一张包含9个分镜的组合图，按3x3网格排列。
-以图1的运动相机产品作为主体，纯黑渐变背景，Low-key 影棚布光，电影级产品摄影质感。
+Generate an image containing 9 storyboard panels, arranged in a 3x3 grid.
+With the action camera product of Image 1 as the subject, pure black gradient background, Low-key studio lighting, cinematic product photography texture.
 
-1. 全景·3/4低角度仰视：运动相机以经典3/4角度悬浮于画面中央，左侧45°柔光箱照亮机身正面，
-右侧轮廓光勾勒出铝合金机身边缘的锐利光边，镜头玻璃表面反射出一道冷白高光。
-2. 中景·正侧面平视：运动相机纯侧面视图，展示机身厚度和侧面按键布局，
-按键表面的磨砂纹理在侧光下清晰可辨，机身腰线的倒角处形成一道细长高光带。
-3. 特写·正面微距俯拍：极致微距聚焦镜头表面，多层镀膜玻璃在侧光下呈现紫蓝色光学干涉色彩，
-镜头边缘的金属环反射出环形高光，景深极浅仅有毫米级。
-4. 中景·正面平视：相机屏幕点亮，显示POV极限运动界面——中央是取景画面，
-左上角防水图标发出蓝色微光，底部录制时长数字可见，屏幕光芒溢出照亮机身正面。
-5. 全景·3/4俯视：相机组件悬浮拆解状态，外壳向上分离，镜头模组向前旋转展开，
-防水密封圈悬浮于中层，主板与传感器在底部发出淡绿微光，组件间蓝色能量线连接。
-6. 中景·3/4正面平视：产品包装盒微侧20°摆放于画面左侧，哑光黑色盒面印有银色品牌标识，
-右侧相机本体以Hero Shot角度展示，盒盖微掀露出深灰绒面内衬。
-7. 特写·背面微距侧光：相机背面散热格栅的极致微距，交叉编织的碳纤维纹理清晰可辨，
-每一束纤维丝反射不同角度的光线，低角度侧光强化纹理的明暗起伏。
-8. 中景·正面平视：相机处于夜间模式，机身正面指示灯亮起暗红色脉冲光，
-屏幕低亮度显示夜视界面，整体环境极暗，仅产品自发光照亮局部。
-9. 全景·正面平视：相机以稳定姿态静置于画面左下方三分之一处，柔和侧光照亮产品，
-右上方留出画面40%的干净黑色空间，用于后期叠加Logo与Slogan。
+1. Panorama · 3/4 low angle high view: The action camera is suspended at the center of the frame at a classic 3/4 angle, a soft softbox on the left 45° illuminates the front of the body, a rim light on the right outlines a sharp white light border on the edge of the aluminum alloy body, and the glass lens surface reflects a cold white highlight.
+2. Medium shot · Side view flat view: Pure side view of the action camera, showing body thickness and side button layout, the matte texture of the button surface clearly distinguishable under side lighting, a long narrow highlight band formed on the chamfered edge of the body waistline.
+3. Extreme close-up · Front macro high angle: Extreme macro focusing on the lens surface, multi-layer coated glass presenting purple-blue optical interference colors under side lighting, the metal ring around the lens edge reflecting a circular highlight, extremely shallow depth of field of only millimeter scale.
+4. Medium shot · Front view: The camera screen lights up, displaying the POV extreme sports interface—center is the viewfinder screen, the waterproof icon at the top-left emits blue micro-glow, the recording duration numbers at the bottom are visible, and screen light spills over to illuminate the front of the body.
+5. Panorama · 3/4 high view: Exploded view of camera components, outer casing separating upwards, lens module rotating and unfolding forwards, waterproof seal ring suspended in the middle layer, motherboard and sensors emitting green micro-glow at the bottom, blue energy lines connecting components.
+6. Medium shot · 3/4 front view: The product packaging box is placed on the left side of the frame, tilted 20°, with a silver brand logo on the matte black box face, and the camera body shown on the right side at a Hero Shot angle, box lid slightly open revealing dark gray velvet lining.
+7. Extreme close-up · Back macro side light: Extreme macro of the camera back cooling grille, the cross-woven carbon fiber texture clearly distinguishable, each fiber bundle reflecting light at different angles, low-angle side lighting highlighting the texture's light and shadow.
+8. Medium shot · Front view: The camera is in night mode, the recording indicator on the front lights up with a dark red pulse light, the screen displays the night vision interface at low brightness, overall environment extremely dark, only product self-glow illuminating local areas.
+9. Panorama · Front view: The camera rests stably at the lower-left rule of thirds, soft side light illuminating the product, leaving 40% clean black space at the top-right for post-overlay of Logo and Slogan.
 
-保持整体风格统一。光影系统：Low-key 暗调棚光贯穿全部面板。
-视觉母题：铝合金拉丝纹理的高光反射在不同面板中反复出现。
+Keep overall style consistent. Lighting system: Low-key dark studio lighting runs throughout all panels.
+Visual motif: aluminum alloy brushed texture highlight reflections repeatedly appear in different panels.
 ```
 
 ---
 
-### 9.2 品牌世界 Grid 写法
+### 9.2 Brand World Grid Writing
 
-**定位**：低密度（TVC 默认）或中密度，角色在品牌世界场景中使用产品。
+**Positioning**: Low Density (TVC default) or Medium Density, with the character using the product in the brand world scene.
 
-**产品可见硬规则**（不可违反）：
-- **产品在每格中必须可见**——品牌世界不等于"没有产品的风景片"，TVC 的品牌世界是"产品在其中生活的世界"
-- 产品占画面 10%-25%，自然融入场景但必须可辨识
-- 产品在画面中的位置必须明确描述（`胸前固定的相机`、`左手腕上的相机`、`桌面上的香水瓶`）
-- 产品屏幕/指示灯的发光颜色要写，增强辨识度
+**Product Visibility Iron Rules** (must not be violated):
+- **The product must be visible in every single panel**—the brand world does not mean a "landscape film without products". The TVC brand world is "the world where the product lives".
+- The product occupies 10%-25% of the frame, naturally integrated into the scene but must be distinguishable.
+- The product's position in the frame must be explicitly described (`chest-mounted camera`, `camera on left wrist`, `perfume bottle on table`).
+- The glow color of the product screen/indicators must be written to enhance recognition.
 
-**写法要点**：
-- 低密度时：每格以 `[景别·视角]：` 精确开头，精确指定场景、产品状态和光影
-- 中密度时：每格以 **场景环境 + 人物动作 + 产品状态** 三要素展开
+**Key Writing Points**:
+- Under low density: each grid begins precisely with `[Shot Size · Angle]:`, precisely specifying scene, product state, and lighting.
+- Under medium density: each grid is described through three elements: **scene environment + character action + product state**.
 
-**完整示例**（运动相机·品牌世界 9 宫格）：
+**Complete Example (Action Camera · Brand World 9-Grid)**:
 
 ```
-生成一张包含9个分镜的组合图，按3x3网格排列。
-真人实拍，电影级摄影，自然光照，16:9横屏。
+Generate an image containing 9 storyboard panels, arranged in a 3x3 grid.
+Real-life shoot, cinematic photography, natural lighting, 16:9 widescreen.
 
-叙事线：一台运动相机跟随极限运动员征服九种极端环境——
-从天空到深海、从雪山到沙漠，记录每一个不可能的瞬间。
+Narrative Line: A sports camera follows an extreme athlete conquering nine extreme environments—
+from sky to deep sea, from snow mountain to desert, recording every impossible moment.
 
-1. 万米高空，跳伞者纵身跃出机舱的冻结瞬间，身体呈大字展开，
-胸前固定的运动相机清晰可见，镜头朝下对准大地，录制指示灯亮起红色微光。
-脚下是白云与蓝色地平线。
-2. 深海峡谷，潜水员沿珊瑚峭壁垂直下潜，蛙鞋踢出的气泡向上翻涌，
-左手腕上的运动相机屏幕在蓝色水下光线中发出绿色微光，显示深度数据。
-阳光从水面折射成波纹光斑。
-3. 阿尔卑斯雪场，滑雪运动员高速转弯激起弧形雪墙，身体极度压低倾斜，
-头盔顶部固定的运动相机捕捉POV视角，雪粒在逆光中闪烁如碎钻。
-4. 垂直岩壁，攀岩者单手抓握岩点的特写瞬间，指关节发白，
-手腕上的运动相机贴近岩面，镜头沾有细微的粉笔灰和汗珠，背景是万丈深渊的虚化。
-5. 沙漠戈壁，越野摩托车飞跃沙丘的顶点瞬间，车手与车辆完全腾空，
-沙尘从轮下喷射形成金色烟尾，车把上固定的运动相机被夕阳照亮，
-铝合金机身反射橙金色光芒。
-6. 激流峡谷，皮划艇运动员穿越白水急流，水花猛烈飞溅在镜头前方，
-船头固定的运动相机被水珠覆盖，水珠透过阳光折射出微棱镜效果。
-7. 城市夜景，跑酷运动员在楼顶边缘起跳飞跃的瞬间，
-脚下是霓虹闪烁的城市天际线，胸前相机的屏幕光与城市灯光交相辉映。
-8. 暴风雪山脊，登山者在白茫茫的暴风中艰难前行，冰晶打在面罩上，
-手套中握住的运动相机仍在录制，指示灯在风雪中顽强闪烁红光。
-9. 日出山巅，运动员站在峰顶回望来路，金色晨光从身后涌出，
-手中举起运动相机对准日出方向，屏幕反射出整片金色天际。
+1. At ten thousand meters high, the frozen moment of a skydiver jumping out of the cabin, body fully spread in a star shape, the chest-mounted action camera clearly visible, lens pointed down at the earth, recording indicator emitting red micro-glow. Below are white clouds and blue horizon.
+2. In the deep sea canyon, a diver descends vertically along a coral cliff, fins kicking up bubbles swirling upwards, the screen of the action camera on the left wrist emitting green micro-glow in the blue underwater light, showing depth stats. Sunlight refracts from water surface into wavy light patterns.
+3. At the Alpine ski resort, a skier turns at high speed kicking up an arc-shaped snow wall, body extremely low and tilted, the action camera mounted on top of the helmet capturing POV angle, snow particles twinkling like crushed diamonds in backlight.
+4. On a vertical rock wall, a close-up of the moment a climber grips a hold with one hand, knuckles whitening, the action camera on the wrist close to the rock face, lens dusted with fine chalk dust and sweat drops, background of abyss blurred.
+5. In the desert goby, the moment an off-road motorcycle leaps over the peak of a sand dune, rider and bike completely airborne, sand spraying from under wheels forming a golden dust tail, the handlebar-mounted action camera illuminated by the setting sun, aluminum alloy body reflecting orange-gold light.
+6. In a turbulent canyon, a kayaker traverses white water rapids, water splashing violently in front of the lens, the bow-mounted action camera covered with water droplets, droplets refracting micro-prism effects through sunlight.
+7. In a city night scene, the moment a parkour athlete leaps from the edge of a rooftop, below is the neon-flashing city skyline, the chest camera screen light reflecting and echoing with the city lights.
+8. On a blizzard mountain ridge, a climber trudges through whiteout storm, ice crystals hitting the visor, the action camera held in glove still recording, indicator stubbornly flashing red in the snowstorm.
+9. At a sunrise mountain peak, the athlete stands on the summit looking back at the path, golden morning light pouring from behind, lifting the action camera toward the sunrise, screen reflecting the entire golden sky.
 
-保持整体风格统一。视觉母题：产品的红色录制指示灯在每个极端环境中顽强亮起。
-色调弧线：从第1格的冷蓝高空逐渐过渡至第9格的暖金日出。
+Keep overall style consistent. Visual motif: the red recording indicator of the product stubbornly lights up in every extreme environment.
+Color tone arc: gradually transitioning from cold blue high sky in Panel 1 to warm golden sunrise in Panel 9.
 ```
 
 ---
 
-### 9.3 交叉 Grid 写法
+### 9.3 Cross-Grid Writing
 
-**定位**：同一张 Grid 中混合"品牌世界"与"产品世界"面板，模拟 TVC 交叉剪辑节奏。
+**Positioning**: Mixing "brand world" and "product world" panels in the same Grid, simulating the TVC cross-cutting rhythm.
 
-**写法要点**：
-- 奇数格（1/3/5/7）为品牌世界场景——高/中密度，角色使用产品
-- 偶数格（2/4/6/8）为产品世界特写——低密度，精确摄影指令
-- 第 9 格固定为 End Frame
-- 相邻格之间设计视觉衔接（形状匹配/色彩匹配/纹理匹配）
+**Key Writing Points**:
+- Odd-numbered grids (1/3/5/7) are brand world scenes—high/medium density, character using the product
+- Even-numbered grids (2/4/6/8) are product world close-ups—low density, precise camera instructions
+- Grid 9 is fixed as the End Frame
+- Neighboring grids designed with visual transitions (shape match / color match / texture match)
 
-**完整示例**（运动相机·交叉 9 宫格）：
+**Complete Example (Action Camera · Cross 9-Grid)**:
 
 ```
-生成一张包含9个分镜的组合图，按3x3网格排列。
-电影级摄影，16:9横屏。
-品牌世界面板为真人实拍自然光，产品世界面板为Low-key影棚光纯黑背景。
+Generate an image containing 9 storyboard panels, arranged in a 3x3 grid.
+Cinematic photography, 16:9 widescreen.
+Brand world panels are real-life shoot natural light, product world panels are Low-key studio light with pure black background.
 
-(图1)运动相机产品参考图。
-品牌世界与产品世界交叉编排，奇数格为使用场景，偶数格为产品特写，第9格为收束定格。
+(Image 1) Action camera product reference image.
+Brand world and product world crosscut, odd-numbered panels are usage scenes, even-numbered panels are product close-ups, panel 9 is ending freeze-frame.
 
-1. 雪场逆光，滑雪者高速弧线转弯的冻结瞬间，
-雪雾如白色浪墙弧形翻涌，头盔上的运动相机在阳光中闪烁。
-2. 近景·3/4侧面：纯黑背景，图1运动相机的机身弧形倒角特写，
-侧光勾勒出与雪墙弧线相似的流畅曲面，铝合金拉丝纹理反射冷白高光。
-3. 海面上空，潜水员后空翻入水的瞬间，身体蜷曲，
-周围飞溅出圆形水花皇冠，腰间固定的运动相机即将没入水中。
-4. 特写·正俯拍：纯黑背景，运动相机镜头正面俯拍，
-圆形镜头轮廓居中，多层镀膜反射出与海水相似的蓝紫色光学色彩，水珠残留在镜面边缘。
-5. 沙漠黄昏，越野摩托飞跃沙丘的剪影，
-背后是燃烧般的橙金色日落，车把上固定的运动相机被夕阳镀上金边。
-6. 中景·侧面平视：纯黑背景，暖金色侧光从左侧扫过产品铝合金机身，
-表面呈现与沙漠夕阳相同的琥珀金色调，材质纹理的高光带缓慢流动。
-7. 垂直岩壁，攀岩者指尖抓握粗糙岩石的极限特写，指关节发白，
-手腕上的运动相机紧贴岩面，背景是深渊虚化。
-8. 特写·正面微距：纯黑背景，产品侧面防滑橡胶握持区的极致微距，
-菱形压纹的凹凸纹理与岩石表面有相似的粗粝质感，
-低角度侧光刻画每一个凸起的高光与沟槽的阴影。
-9. 全景·正面平视：纯黑渐变背景，运动相机以最佳角度静置于画面左下三分之一处，
-柔和侧光照亮产品，右上方大面积留白用于Logo与Slogan叠加。
+1. Ski resort backlight, frozen moment of a skier high-speed carving turn, snow mist swirling like a white wave wall, the action camera on the helmet flashing in sunlight.
+2. Close-up · 3/4 side view: Pure black background, close-up of the chamfered edge of Image 1 action camera body, side lighting outlining a smooth surface similar to the snow wave wall, aluminum alloy brushed texture reflecting cold white highlights.
+3. Over the sea, moment of a diver backflipping into the water, body curled, splashing out a circular water crown around, the waist-mounted action camera about to submerge.
+4. Extreme close-up · Front view: Pure black background, front view of action camera lens, circular lens outline centered, multi-layer coating reflecting blue-purple optical colors similar to seawater, water droplets remaining on lens edge.
+5. Desert dusk, silhouette of an off-road bike leaping over a sand dune, behind is a burning orange-gold sunset, the handlebar-mounted action camera gilded by the setting sun.
+6. Medium shot · Side view flat view: Pure black background, warm gold side light sweeps over the product aluminum alloy body from the left, presenting the same amber gold tone as the desert dusk, highlights on the material texture flowing slowly.
+7. Vertical rock wall, extreme close-up of climber's fingertips gripping rough rock, knuckles whitening, the action camera on the wrist close to the rock face, background is deep abyss blur.
+8. Extreme close-up · Front macro: Pure black background, extreme macro of the product's side non-slip rubber grip area, the diamond embossed texture having a rough texture similar to the rock surface, low-angle side lighting sculpting each raised highlight and groove shadow.
+9. Panorama · Front view: Pure black gradient background, the action camera rests at its best angle at the lower-left rule of thirds, soft side light illuminating the product, large area blank space at the top-right for Logo and Slogan overlay.
 
-保持整体风格统一。奇数格保持真人实拍自然光质感，偶数格保持Low-key影棚产品摄影质感。
-两种世界通过形状/色彩/纹理的视觉衔接串联。
+Keep overall style consistent. Odd panels maintain real-life natural light texture, even panels maintain Low-key studio product photography texture.
+The two worlds are connected through visual matches of shape/color/texture.
 ```
 
 ---
 
-### 9.4 End Frame 格
+### 9.4 End Frame Grid
 
-**总原则**：布局依品牌规范而定——**产品居中**（Hero Pose）与**产品偏置留白**均为有效方案。
+**General Principle**: Layout depends on brand guidelines—both **product centered** (Hero Pose) and **product offset with blank space** are valid schemes.
 
-**核心规则**：
-1. 构图必须为后期文字预留空间（约 30%-40% 干净区）
-2. 产品状态必须是"最终态"：屏幕亮起、外观完整、姿态稳定沉静
-3. 光影简洁高级，不写 Logo/Slogan 文字内容，仅描述留白区域
+**Core Rules**:
+1. Composition must reserve space for post-production text overlay (approx. 30%-40% clean area)
+2. Product state must be the "final state": screen lit, exterior intact, posture stable and serene
+3. Lighting clean and premium; do not write Logo/Slogan text content in the prompt, only describe the blank area
 
-**End Frame 格的提示词模板**：
-
-```
-[格号]. [景别]·[视角]：[背景描述]，[产品名称]以[角度/姿态]静置于画面[位置]，
-[产品最终状态描述]。[简洁光影]。
-[留白区域位置]留出画面[百分比]的干净空间，背景渐变均匀无杂物。
-```
-
-**示例**：
+**End Frame Grid Prompt Template**:
 
 ```
-9. 全景·正面平视：深空灰渐变背景，运动相机以3/4低角度静置于画面左下方三分之一处，
-屏幕显示品牌主色蓝色界面，所有指示灯微微亮起。柔和左侧侧光照亮产品，
-在右侧形成自然过渡的阴影。产品右上方留出画面40%的干净空间，背景渐变均匀无杂物。
+[Grid Number]. [Shot Size] · [Angle]: [Background Description], [Product Name] resting at [Position] of the frame in [angle/posture], [Product Final State Description]. [Clean Lighting]. [Blank Area Location] leaves [Percentage] of clean space in the frame, background gradient uniform with no clutter.
+```
+
+**Example**:
+
+```
+9. Panorama · Front view: Dark gray gradient background, the action camera rests at a 3/4 low angle at the lower-left rule of thirds, the screen displaying the brand primary blue interface, all indicators glowing slightly. Soft side light from the left illuminates the product, creating a naturally transitioning shadow on the right. A clean space occupying 40% of the screen is left at the top-right, background gradient uniform with no clutter.
 ```
 
 ---
 
-### 9.5 TVC 多张网格规划示例
+### 9.5 TVC Multi-Grid Planning Example
 
-以下示例展示一支 30 秒 TVC（运动相机）如何用 2 张网格覆盖完整内容。
+The following example shows how a 30-second TVC (Action Camera) uses 2 grids to cover the complete content.
 
-**项目信息**：
+**Project Info**:
 
-| 维度 | 内容 |
+| Dimension | Content |
 |------|------|
-| 产品 | 专业运动相机 |
-| 时长 | 30 秒 |
-| 叙事模型 | 品牌世界穿梭（C 模型） |
+| Product | Professional Action Camera |
+| Duration | 30 seconds |
+| Narrative Model | Brand World Crosscut (Model C) |
 
-**网格规划总表**：
+**Grid Planning Table**:
 
-| 网格 | 时段 | 类型 | 剧情密度 | 叙事功能 |
+| Grid | Timeframe | Type | Plot Density | Narrative Function |
 |------|------|------|---------|---------|
-| G1 | 0-15s | 品牌世界 Grid | 低密度 | 极限运动场景蒙太奇 |
-| G2 | 15-30s | 产品世界 Grid + End Frame | 低密度 | 产品多角度影棚展示 + 收束 |
+| G1 | 0-15s | Brand World Grid | Low Density | Extreme sports scene montage |
+| G2 | 15-30s | Product World Grid + End Frame | Low Density | Product multi-angle studio display + Resolution |
 
-**跨网格一致性检查清单**：
+**Cross-Grid Consistency Checklist**:
 
-- [ ] **全局风格**：G1 和 G2 使用相同的画质锚定
-- [ ] **参考图**：两张网格引用同一张产品参考图（`图1`）
-- [ ] **衔接过渡**：G1 第 9 格色调 → G2 第 1 格色调，色温连续
-- [ ] **产品描述**：两张网格中产品的材质关键词完全一致
-- [ ] **产品颜色**：所有格中产品配色描述一致
+- [ ] **Global Style**: G1 and G2 use the same quality anchors
+- [ ] **Reference Image**: Both grids reference the same product reference image (`Image 1`)
+- [ ] **Transition**: G1 panel 9 tone -> G2 panel 1 tone, color temperature continuous
+- [ ] **Product Description**: Product material keywords in both grids are completely identical
+- [ ] **Product Color**: Product color scheme descriptions are identical in all panels
+- [ ] **Presenter Clothing**: Presenter clothing descriptions are identical in all panels
 
 ---
 
-### 9.6 产品一致性维护
+### 9.6 Product Consistency Maintenance
 
-TVC 多宫格中产品跨网格出现，必须维护外观一致性。
+Maintaining product appearance consistency across grids in TVC multi-grids is critical.
 
-#### 规则一：锁定产品描述模板
+#### Rule 1: Lock in Product Description Template
 
 ```
-产品标准描述模板：
-[产品名]，[核心材质A] + [核心材质B] 机身，
-[颜色/配色方案]，[关键设计特征1]，[关键设计特征2]，
-[尺寸/比例特征]。
+Standard Product Description Template:
+[Product Name], [Core Material A] + [Core Material B] body, [Color / Color Scheme], [Key Design Feature 1], [Key Design Feature 2], [Size / Proportion Feature].
 ```
 
-示例：
+Example:
 ```
-产品标准描述：
-XX Pro 运动相机，铝合金拉丝机身 + 碳纤维后壳，
-深空灰配色，正面超广角镜头模组（圆形，多层镀膜），
-侧面三颗红色功能按键，机身方正硬朗，掌心大小。
+Standard Product Description:
+XX Pro Action Camera, aluminum alloy brushed body + carbon fiber back shell, space gray color scheme, front ultra-wide-angle lens module (circular, multi-layer coated), three red function buttons on the side, body square and robust, palm-sized.
 ```
 
-#### 规则二：统一光影关键词
+#### Rule 2: Unified Light and Shadow Keywords
 
-同一产品在不同 Grid 中的产品世界面板应使用相同的光影词汇集（主光方向、轮廓光方向、材质高光描述词、色温基调全局一致）。
+The same product in product world panels across different Grids should use the same set of lighting vocabulary (key light direction, rim light direction, material highlight descriptions, and color temperature baseline globally consistent).
 
-#### 规则三：角度描述标准化
+#### Rule 3: Angle Description Standardization
 
-跨网格的同一角度必须使用完全相同的角度描述文本，不可在 G1 中写 `微俯` 而在 G2 中写 `斜上方30°`。
+The same angle across different grids must use the exact same angle description text; do not write `slightly high` in G1 and `30° above angle` in G2.
 
-#### 规则四：品牌世界中的产品最低描述要求
+#### Rule 4: Minimum Product Description Requirements in Brand Worlds
 
-即使产品只占画面 10%，仍需包含四个信息点：产品安装位置、材质关键词、功能状态提示、产品配色。
+Even if the product occupies only 10% of the frame, it must still include four information points: product mounting location, material keywords, functional state cues, and product color scheme.
 
-#### 规则五：产品参考图全局引用
+#### Rule 5: Global Reference of Product Reference Images
 
-所有网格必须引用同一张产品资产图，不可使用不同的产品参考图。
+All grids must reference the same product asset image; do not use different product reference images.
 
-#### 规则六：出镜者服装一致性
+#### Rule 6: Presenter Clothing Consistency
 
-当人物在品牌世界面板中出镜（无论全身/下半身/背影/剪影），所有网格中该人物的服装描述必须完全一致。前期筹备阶段建立的**出镜者标准描述**是唯一权威——每格涉及人物时必须复用，不可在 G1 中写"黑色短裤"而在 G2 中写"黑色长裤"。服装的款式、颜色、材质三要素跨格不可变化，仅姿态和动作可变。
+When a character appears in brand world panels (whether full-body/lower-body/back view/silhouette), the clothing description of this character must be completely consistent across all grids. The **presenter standard description** established during Pre-production is the sole authority—it must be reused in every grid involving the character; do not write "black shorts" in G1 and "black pants" in G2. The style, color, and material of the clothing must not change across grids; only postures and actions are allowed to change.
 
-#### 规则七：禁止比喻修辞
+#### Rule 7: Figurative Language Prohibited
 
-多宫格提示词中**禁止使用比喻、拟人、类比等修辞手法**。AI 图片模型是字面理解的——"如雕塑"会生成石膏材质的人体，"如花园"会生成花卉植物，"如丝绸"会改变材质渲染。
+**Using metaphors, personifications, analogies, and other figures of speech in multi-grid prompts is prohibited.** AI image models interpret literally—"like a sculpture" will generate plaster/marble texture bodies, "like a garden" will generate floral plants, and "like silk" will change material rendering.
 
-| 错误写法 | 问题 | 正确写法 |
+| Incorrect Writing | Issue | Correct Writing |
 |---------|------|---------|
-| 路人定格如**雕塑** | 模型可能生成石膏/大理石质感人体 | 路人保持行走姿态静止不动，表情凝固，衣角悬停在运动状态 |
-| 在纸张之间穿行如同**采摘花朵** | 模型可能生成花卉元素 | 从空中逐张摘取悬浮的纸张 |
-| 液滴如**琥珀珠** | 模型可能将液滴渲染为琥珀色固体 | 液滴在光照下呈半透明深色，表面反射高光 |
+| Passersby frozen like **sculptures** | Model might generate plaster/marble texture bodies | Passersby keep walking posture still, expressions frozen, clothing corners suspended in motion |
+| Walking among papers like **plucking flowers** | Model might generate floral elements | Plucking suspended papers from the air one by one |
+| Droplets like **amber beads** | Model might render droplets as amber-colored solids | Droplets appear translucent and dark under lighting, surface reflecting highlights |
 
-原则：**描述你要什么，不要描述它像什么。**
+Principle: **Describe what you want, not what it looks like.**
 
-#### 规则八：多宫格只写状态，不写过程
+#### Rule 8: Multi-Grids Only Write States, Not Processes
 
-多宫格是静态关键帧，每格只能描述**一个时间点的画面状态**，不能描述动态过程。动词必须是静态的（悬浮、静止、停驻、凝固）而非过程性的（飞出、涌出、溅起、坠落）。过程性动作留给视频提示词。
+Multi-grids are static keyframes; each grid can only describe the **visual state at one point in time**, not a dynamic process. Verbs must be static (suspended, still, resting, frozen) rather than process-oriented (flying out, pouring out, splashing, falling). Process-oriented actions are left for video prompts.
 
-| 错误写法（过程态） | 问题 | 正确写法（结果态） |
+| Incorrect Writing (Process State) | Issue | Correct Writing (Final State) |
 |----------------|------|----------------|
-| 咖啡杯**脱手飞出**，液体**开始溢出**杯口 | "飞出""溢出"是动态过程，静态帧无法表达 | 咖啡杯悬停在半空，液体凝固为弧形，杯口朝下 |
-| 红酒**开始涌出**杯口，形成**即将倾泻**的弧线 | "涌出""倾泻"是进行中的动作 | 红酒液柱悬浮在倾斜酒杯与桌面之间，液面反射烛光 |
-| 纸张在空中**翻飞** | "翻飞"是动态 | 数十张纸张以各种角度悬停在空中 |
+| Coffee cup **flying out of hand**, liquid **beginning to spill** from cup mouth | "Flying out" and "spilling" are dynamic processes, static frames cannot express | Coffee cup suspended in mid-air, liquid solidified into an arc, cup mouth facing down |
+| Red wine **beginning to pour** from cup mouth, forming an arc **about to spill** | "Pouring" and "spilling" are ongoing actions | Red wine liquid column suspended between tilted glass and tabletop, liquid surface reflecting candlelight |
+| Papers **fluttering** in the air | "Fluttering" is dynamic | Dozens of papers suspended in the air at various angles |
 
-这条规则与"动态特效的分工"互补：特效分工解决"写什么"，本规则解决"怎么写"。
-
----
-
-## Part 2: 视频提示词语法
+This rule is complementary to "Division of Labor for Dynamic Special Effects": the division of labor handles "what to write", while this rule handles "how to write".
 
 ---
 
-## 一、视频提示词 vs 静态关键帧提示词
+## Part 2: Video Prompt Syntax
 
-核心转换思路：把"是什么"变成"怎么变"。
+---
 
-| 维度 | 静态关键帧 | 视频提示词 |
+## I. Video Prompts vs. Static Keyframe Prompts
+
+Core transition mindset: converting "what it is" into "how it changes".
+
+| Dimension | Static Keyframe | Video Prompt |
 |------|-----------|-----------|
-| 时间 | 无 | 有时间码，精确到秒 |
-| 主体 | 冻结状态/姿态 | 运动中的过程（动作+变化） |
-| 镜头 | 固定景别+视角 | 运镜轨迹（推/拉/环绕/跟随） |
-| 画面衔接 | 无 | 转场指示（硬切/溶解/匹配剪辑） |
-| 光影 | 固定光源方向 | 光影随时间变化（渐变/闪烁/昼夜） |
+| Time | None | Has time code, precise to seconds |
+| Subject | Frozen state/posture | Process in motion (action + change) |
+| Camera | Fixed shot size + angle | Camera movement trajectory (push/pull/orbit/follow) |
+| Transition | None | Transition instructions (hard cut / dissolve / match cut) |
+| Lighting | Fixed light source direction | Light and shadow variations over time (gradient / flicker / day-night) |
 
 ---
 
-## 二、视频提示词的写作逻辑与输出格式
+## II. Video Prompt Writing Logic & Output Format
 
-视频提示词遵循三部分逻辑，**输出时不使用"风格信封""连续性指令"等术语**，使用自然语言。
+Video prompts follow a three-part logic, using natural language.
 
-### 第一部分：风格与约束声明
+### Section 1: Style & Constraints Statement
 
-**必须覆盖**：视觉风格、色彩基调、约束条件、**"无背景音乐"（必写）**、**产品@产品多视图图片**。
+**Must cover**: visual style, color tone, constraints, **"no background music" (required)**, and **product@product_multiview_image**.
 
-> **视频模型双图输入**：视频模型接收两张图片——多宫格分镜图（首帧）+ 产品多视图（产品锚定）。在风格声明末尾用 `产品@产品多视图图片 的广告` 引用产品多视图，让模型理解产品外观。`(图1)(图2)` 参考图映射是多宫格提示词（图片生成阶段）的语法，不用于视频提示词。
+> **Video Model Dual-Image Input**: The video model receives two images—the multi-grid storyboard image (first frame) + the product multi-view image (product anchor). At the end of the style statement in the video prompt, use `Ad for product@product_multiview_image` to reference the product multi-view, letting the model understand the product's appearance. The `(Image 1)(Image 2)` reference image mapping is the syntax for the image generation stage (multi-grid prompts) and is not used for video prompts.
 
-> **音频铁律**：视频模型默认生成 BGM，不写就会有。多段拼接时各段 BGM 在接缝处断裂。BGM 在后期作为单独音轨统一铺设。角色对白在镜头描述中用引号标注。
+> **Audio Iron Rule**: Video models generate BGM by default; it will appear if not explicitly written. In multi-segment splicing, the BGM breaks at the joints. BGM is laid down uniformly as a separate audio track in post-production. Character dialogue is marked with quotes in the shot description.
 
-> **不写后期指令**：视频提示词只描述视频模型能生成的画面内容。以下属于后期工作，不写入视频提示词：Logo/品牌标识叠加、Slogan/文字渐显、调色指令、音效设计、字幕排版。End Frame 在视频提示词中只需描述"产品居中定格、画面干净留白"等纯视觉状态，Logo 和 Slogan 的空间预留属于多宫格图片提示词（End Frame 格）的职责。
+> **Do Not Write Post-Production Instructions**: Video prompts only describe visual content that the video model can generate. The following belong to post-production and are not written in video prompts: Logo/brand mark overlays, Slogan/text fades, color grading instructions, sound effect design, and subtitle typography. The End Frame in video prompts only needs to describe pure visual states such as "product centered and frozen, frame clean with blank space"; space reservation for Logo and Slogan belongs to the multi-grid image prompt (End Frame panel).
 
-**输出示例**：
-> 风格：暗黑童话告别场景 / 红黑高对比森林色调 / 定格动画质感 / 强烈光源对冲构图（门内白光 vs 门外赤红森林）/ 细腻表情特写 / 情绪克制的离别氛围 / 无字幕 / 无背景音乐 产品@产品多视图图片 的广告
+**Output Example**:
+> Style: Dark fairy tale farewell scene / Red and black high-contrast forest colors / Stop-motion texture / Strong light source opposing composition (white light inside door vs. crimson forest outside door) / Exquisite facial expression close-up / Emotionally restrained farewell atmosphere / No subtitles / No background music. Ad for product@product_multiview_image.
 
-### 第二部分：镜头脚本
+### Section 2: Shot Script
 
-两种格式，根据目标视频模型选择：
+Choose one of two formats based on the target video model:
 
-#### 格式 A：精简镜头表
+#### Format A: Simplified Shot List
 
 ```
-第1个镜头[0-2秒][中景] 巨大的树门嵌在粗壮树干中，红色森林环绕。小女孩与小老鼠并肩站在门前，女孩微微低头，小老鼠仰头望她。
-第2个镜头[2-4秒][特写] 小老鼠举起小爪子挥手，"吱吱吱"轻声告别，女孩与它对视，神情温柔又不舍。
-第3个镜头[4-7秒][中景] 女孩缓缓转身走向树门，伸手推门。门缝透出强烈白光，将她轮廓照成剪影。她走出两步后停住，回头看向小老鼠。
+Shot 1 [0-2s] [Medium shot] A huge tree door embedded in a thick tree trunk, surrounded by a red forest. A little girl and a small mouse stand side by side in front of the door, the girl lowering her head slightly, the mouse looking up at her.
+Shot 2 [2-4s] [Close-up] The small mouse lifts its paw to wave, saying "squeak squeak squeak" in a soft farewell, the girl looks at it, her expression warm and reluctant.
+Shot 3 [4-7s] [Medium shot] The girl slowly turns to walk toward the tree door, reaching out to push it. Strong white light pours from the door crack, outlining her silhouette. She takes two steps out and stops, turning back to look at the mouse.
 ...
 ```
 
-#### 格式 B：详细分段描述
+#### Format B: Detailed Segmented Descriptions
 
 ```
-【0-3s：山野溯源，青提滚落】
-镜头：镜头由远景缓慢向前推进，随后切入微距跟随镜头。
-画面：画面基调为黑白极简的自然山野，一个背着竹筐的插画线条少女手持铁锹走入画面。
-      随着她走上岩石，背后的竹筐倾斜，几颗线条勾勒的果实滚落而出。
+**0-3s: Mountain Source, Grape Rolling**
+Camera: Camera slowly pushes forward from a wide shot, then cuts to a macro tracking shot.
+Visuals: The overall visual tone is a black-and-white minimalist mountain wilderness, a hand-drawn line-art young girl carrying a bamboo basket walks into the frame with a shovel. As she steps onto a rock, the basket tilts, and several fruits outlined in lines roll out.
 
-【4-7s：粉色倾注，果香苏醒】
-镜头：镜头从低角度仰拍，随后跟随着水流的轨迹自上而下快速平移。
-画面：巨大的写实透明杯身伫立在山间岩石上，杯底已经铺满了鲜活青提。
-      突然，一股带有真实光泽的粉色桃桃果汁如瀑布般从上方倾注而下...
+**4-7s: Pink Pouring, Fruit Aroma Awakening**
+Camera: Camera shoots up from a low angle, then pans down rapidly following the path of the water flow.
+Visuals: A huge realistic transparent cup body stands on the rocks in the mountains, the cup bottom already filled with fresh green grapes. Suddenly, a stream of pink peach juice with realistic luster pours down from above like a waterfall...
 ```
 
-### 第三部分：衔接与贯穿（自然融入）
+### Section 3: Transitions & Continuity (Natural Integration)
 
-两种处理方式：
+Two processing methods:
 
-1. **融入各镜描述**：在每镜描述中自然提及转场和贯穿元素
-   > 第1个镜头[0-2.5秒][远景·逆光]（对应P1）**溶解承接上段末尾。** 固定机位，三头奶牛的剪影在金色晨光中缓缓走向右侧...
+1. **Integrated into Shot Descriptions**: Naturally mention transitions and continuous elements in each shot description
+   > Shot 1 [0-2.5s] [Wide shot · Backlight] (corresponding to P1) **Dissolve transition from previous segment.** Fixed camera, three cows in silhouette slowly walking to the right in golden morning light...
 
-2. **末尾追加备注**（仅在信息量大时）：
-   > 全片以硬切为主，建立镜头间用溶解。金色轮廓光持续勾勒每镜中奶牛边缘。P9暖金牧场远景自然过渡至下一段。
+2. **Append Notes at the End** (only when information density is high):
+   > All clips are mainly hard cuts, with dissolves used to establish shots. Golden rim light consistently outlines the edges of cows in each shot. The G9 warm golden pasture panorama naturally transitions to the next segment.
 
 ---
 
-## 三、逐镜描述公式
+## III. Shot-by-Shot Description Formula
 
-### 七要素公式
+### Seven-Element Formula
 
 ```
-[时间码][景别+视角] + [镜头运动] + [主体动作] + [环境/光效变化] + [角色对白(如有)] + [转场指示]
+[Time Code] [Shot Size + Angle] + [Camera Movement] + [Subject Motion] + [Environment/Lighting Variation] + [Character Dialogue (if any)] + [Transition Instruction]
 ```
 
-### 写作要点
+### Writing Points
 
-- **动词为王**：视频提示词的核心是动词——扫过、升腾、旋转、推进、弥漫、消散
-- **渐变优于突变**：用"渐变""缓慢""逐渐"描述变化过程
-- **具体优于抽象**：`旋转30°` 优于 `缓慢旋转`
-- **因果链**：镜头运动引发主体变化，主体变化影响光影反应
-  - 例：`产品向镜头推进` → `烟雾随推进速度弥漫扩散` → `暖光渐变为深金调`
+- **Verbs are King**: The core of video prompts is verbs—sweep, rise, rotate, push, diffuse, dissipate.
+- **Gradual Over Sudden**: Use "gradually", "slowly", and "progressively" to describe transition processes.
+- **Specific Over Vague**: `rotate 30°` is better than `slowly rotate`.
+- **Causality Chain**: Camera movement triggers subject changes, and subject changes affect lighting reactions.
+  - Example: `product pushes toward camera` -> `smoke diffuses with push speed` -> `warm light gradually shifts to deep gold`.
 
 ---
 
-## 四、15 秒标准节奏编排
+## IV. 15-Second Standard Rhythm Choreography
 
-### 四段节奏模型
+### Four-Stage Rhythm Model
 
-| 时段 | 秒数 | 功能 | 节奏 |
+| Stage | Duration | Function | Rhythm |
 |------|------|------|------|
-| **定场** | 0-3s | 建立场景/氛围 | 慢 |
-| **发展** | 3-7s | 展开叙事/展示 | 中速 |
-| **高潮** | 7-12s | 情绪/动作顶峰 | 快 |
-| **收束** | 12-15s | 留白/余韵/CTA | 减速 |
+| **Establish** | 0-3s | Setting scene/atmosphere | Slow |
+| **Development** | 3-7s | Narrative unfolding / display | Medium speed |
+| **Climax** | 7-12s | Emotion/action peak | Fast |
+| **Resolution** | 12-15s | Blank space / resolution / CTA | Decelerating |
 
-### 非标准节奏
+### Non-standard Rhythms
 
-| 变体 | 结构 | 适用 |
+| Variant | Structure | Applicable |
 |------|------|------|
-| **慢热型** | 5s定场 + 5s发展 + 3s高潮 + 2s收束 | 氛围短片、艺术片 |
-| **冲击型** | 1s定场 + 4s发展 + 8s高潮 + 2s收束 | 动作片、游戏CG |
-| **循环型** | 建立→高潮→建立→高潮→收束 | 音乐MV、节奏驱动 |
-| **倒叙型** | 高潮→倒叙发展→回到高潮→收束 | 悬疑、反转叙事 |
+| **Slow Build-up** | 5s establish + 5s development + 3s climax + 2s resolution | Atmospheric clips, art films |
+| **Impact Type** | 1s establish + 4s development + 8s climax + 2s resolution | Action films, game CG |
+| **Cyclic Type** | establish -> climax -> establish -> climax -> resolution | Music MVs, rhythm-driven |
+| **Flashback Type** | climax -> flashback development -> return to climax -> resolution | Suspense, twist narratives |
 
 ---
 
-## 五、与多宫格的引用规范
+## V. Reference Specifications with Multi-grids
 
-视频提示词可以直接引用多宫格图中的面板位置：
-- 按面板编号：`（对应分镜P1）`、`（对应P5-P7）`
-- 按行列位置：`（对应第2行第3列）`
+Video prompts can reference panel positions in the multi-grid directly:
+- By panel number: `(corresponding to storyboard P1)`, `(corresponding to P5-P7)`
+- By row and column position: `(corresponding to Row 2, Column 3)`
 
-引用示例：
+Reference Example:
 
 ```
-第1个镜头[0-2秒][全景·俯拍]（对应P1）产品静置于画面中央，暖金侧光缓慢扫过...
-第2个镜头[2-4秒][近景·侧仰]（对应P2）产品缓慢旋转，棱面反射变化的光影...
+Shot 1 [0-2s] [Panorama · High angle] (corresponding to P1) Product rests at the center of the frame, warm gold side light slowly sweeping...
+Shot 2 [2-4s] [Close-up · Side low angle] (corresponding to P2) Product slowly rotates, facets reflecting changing light and shadow...
 ```
 
-多面板对应单镜头：
+Multi-panel corresponding to a single shot:
 ```
-第3个镜头[4-8秒][中景·平视]（P3→P4过渡）产品向镜头推进，场景从P3的状态渐变为P4...
+Shot 3 [4-8s] [Medium shot · Eye level] (P3 -> P4 transition) Product pushes toward the camera, scene gradually transitioning from P3 state to P4...
 ```
 
 ---
 
-## 六、多段视频的跨段连续性
+## VI. Cross-segment Continuity of Multi-segment Videos
 
-### 跨段一致性要素
+### Cross-segment Consistency Elements
 
-| 要素 | 要求 |
+| Element | Requirement |
 |------|------|
-| **风格声明** | 所有段共享相同的风格与约束声明 |
-| **无背景音乐** | 每段都必须写 |
-| **角色外观** | 通过引用同一资产图保持一致 |
-| **色调连续** | 前段末尾色调 ≈ 后段开头色调 |
-| **运动连续** | 角色运动方向在段间不跳变 |
+| **Style Statement** | All segments share identical style and constraints statements |
+| **No Background Music** | Must be written in every segment |
+| **Character Appearance** | Maintained consistent by referencing the same asset image |
+| **Tone Continuity** | Previous segment end tone ≈ next segment start tone |
+| **Motion Continuity** | Character motion direction does not jump abruptly between segments |
 
-### 段间独立性
+### Segment Independence
 
-每段视频提示词单独喂入视频模型，模型不知道其他段的内容。每段的 Phase 编号从 Phase 1 开始、秒数从 0s 开始，不继承上一段的编号或时间轴。不要在本段描述中引用其他段已发生的事件（如"回归之前的阳台""一切如初""与上一段相比多了柔雾"）。跨段一致性通过重复相同的风格声明和产品描述实现，而非文本引用。
+Each video prompt segment is fed into the video model independently; the model does not know the content of other segments. The Phase numbering of each segment starts from Phase 1, and seconds start from 0s, without inheriting numbering or timelines from previous segments. Do not reference events that have already occurred in other segments in the current description (e.g., "returning to the previous balcony", "everything as before", "more soft mist compared to the previous segment"). Cross-segment consistency is achieved by repeating identical style statements and product descriptions, not through text referencing.
 
-### 段间衔接类型
+### Segment Transition Types
 
-衔接类型描述的是**剪辑层面**的视觉过渡策略（用于指导后期拼接），不是让视频提示词在文本中引用其他段：
+Transition types describe the **editing level** visual transition strategy (used to guide post-production splicing), not referencing other segments in text:
 
-| 衔接类型 | 适用 |
+| Transition Type | Applicable |
 |---------|------|
-| **动作承接** | 连续叙事 |
-| **氛围延续** | 情绪短片 |
-| **场景跳转**（渐暗/渐亮） | 多场景叙事 |
-| **呼应回扣** | 循环/升华叙事 |
+| **Action Continuity** | Continuous narratives |
+| **Atmospheric Continuity** | Emotional clips |
+| **Scene Jump** (fade to black / fade to light) | Multi-scene narratives |
+| **Call-back Echo** | Cyclic/elevated narratives |
 
 ---
 
-## Part 3: 产品电影化拆解
+## Part 3: Cinematic Product Breakdown
 
 ---
 
-### 一、视频提示词结构
+### I. Video Prompt Structure
 
-TVC 产品视频采用多阶段\结构。
+TVC product videos use a multi-phase structure.
 
-#### 标准 Phase 结构
+#### Standard Phase Structure
 
 ```
- [编号]（[起始秒]s-[结束秒]s）：[阶段名称]
-├─ 镜头运动：[运镜方式 + 速度 + 方向]
-├─ 产品状态：[当前产品形态/动态变化]
-├─ 功能揭示：[该阶段展示的核心卖点]
-├─ 光影设计：[光源类型 + 方向 + 变化]
-├─ 材质焦点：[当前阶段重点展示的材质/质感]
-└─ 视觉特效：[粒子/能量流/数字叠加等]
+Phase [Number] ([Start]s-[End]s): [Phase Name]
+├─ Camera Movement: [Camera movement method + speed + direction]
+├─ Product State: [Current product morphology/dynamic change]
+├─ Feature Reveal: [Core selling point displayed in this stage]
+├─ Lighting Design: [Light source type + direction + variation]
+├─ Material Focus: [Material/texture highlighted in the current stage]
+└─ Visual Effects: [Particles/energy flow/digital overlays, etc.]
 ```
 
-####  节奏编排原则
+#### Rhythm Choreography Principles
 
-| 阶段类型 | 典型时长 | 节奏 | 作用 |
+| Stage Type | Typical Duration | Rhythm | Function |
 |---------|---------|------|------|
-| 悬念开场 | 1-2s | 极慢 / 静止 | 制造期待，暗示产品轮廓 |
-| 拆解/展开 | 2-3s | 慢→加速 | 展示内部结构，传递技术感 |
-| 功能激活 | 1-2s | 爆发 | 屏幕点亮、数字跳动、传感器发光 |
-| 爆发旋转 | 1-2s | 快速 | 360°全方位展示产品外观 |
-| 微距潜入 | 1-2s | 超慢 | 材质质感收尾，建立高级感 |
-| 品牌定格 | 1-1.5s | 静止 | Logo + Slogan + 产品最终姿态 |
+| Suspense Opening | 1-2s | Extremely slow / still | Building anticipation, hinting at product silhouette |
+| Disassembly / Unfolding | 2-3s | Slow -> accelerating | Displaying internal structure, conveying tech depth |
+| Feature Activation | 1-2s | Explosive | Screen lighting up, digits ticking, sensors glowing |
+| Explosive Rotation | 1-2s | Fast | 360° all-round display of product appearance |
+| Macro Dive | 1-2s | Super slow | Material texture resolution, establishing premium feel |
+| Brand Freeze-frame | 1-1.5s | Still | Logo + Slogan + product final posture |
 
-#### 格式要点
+#### Format Points
 
-- **风格声明**末尾固定"无背景音乐"
-- **Phase 编号**从 1 开始递增，括号内标注精确秒数
-- **秒数连续**：前一 Phase 结束秒 = 后一 Phase 开始秒，无间隙无重叠
-
----
-
-### 二、组件拆解/装配动画编排
-
-#### 1. 悬浮拆解（Floating Disassembly）
-
-```
-产品在画面中央悬浮，各组件开始缓慢分离——外壳向左上方平移漂浮，
-镜头模组向右侧旋转分离，主板向下方悬浮展开，电池组向后方滑出。
-所有部件之间有微弱的蓝色能量光线连接，暗示内部协同关系。
-背景纯黑，组件表面被精准的侧光勾勒出轮廓。
-```
-
-#### 2. 爆炸视图（Exploded View）
-
-```
-产品瞬间爆炸式展开，所有组件沿中心轴向外弹射至各自位置——
-顶部：镜头组件悬浮旋转，玻璃镜片折射出彩虹光斑；
-中部：主板与芯片组水平展开，电路纹理发出微弱的绿色脉冲光；
-底部：电池模块与散热系统垂直下沉，金属散热片反射锐利的银色高光。
-整体呈对称爆炸视图，工业设计感极强。
-```
-
-#### 3. 精密装配回弹（Precision Assembly Snap-back）
-
-```
-各组件开始高速回归——散热模块率先归位，发出金属撞击的微震；
-主板精准滑入卡槽，电路瞬间亮起脉冲光；镜头模组旋转拧入，
-玻璃表面闪过一道高光；外壳最后扣合，接缝处一道白光闪过，
-产品恢复完整形态，表面反光如新。
-```
-
-**节奏要点**：拆解用 2-3 秒（慢），装配回弹用 0.8-1.2 秒（快），速度对比产生冲击力。
+- **Style statement** ends with "no background music"
+- **Phase numbers** increase from 1, with precise seconds marked in parentheses
+- **Seconds continuous**: previous Phase end second = next Phase start second, no gaps or overlaps
 
 ---
 
-### 三、功能可视化设计
+## II. Component Disassembly/Assembly Animation Choreography
 
-#### 1. 屏幕点亮（Screen Activation）
-
-```
-产品屏幕从全黑状态开始，一个像素点从中心亮起，
-光芒以波纹状向四周扩散，屏幕内容逐渐显现——
-界面元素依次浮现，图标从下方滑入，
-屏幕光芒照亮产品正面和周围环境，
-在桌面上投射出彩色的屏幕倒影。
-```
-
-#### 2. 数字跳动（Digits Ticking）
+#### 1. Suspended Disassembly
 
 ```
-画面聚焦产品屏幕，数字开始高速跳动——
-电池图标旁的数字从 00:00:00 开始极速攀升，
-数字翻滚如老式翻页时钟，每一位数字带有微弱的运动模糊，
-最终定格在 04:00:00，数字发出脉冲式的金色光芒，
-暗示超长续航。整个过程在 1.5 秒内完成。
+Product suspended at the center of the frame, components slowly separating—the outer shell hovering and drifting to the top-left, the lens module separating and rotating to the right, the motherboard suspended and unfolding downwards, and the battery pack sliding out to the back. Faint blue energy lines connect all parts, implying internal synergy. Background pure black, component surfaces outlined by precise side lighting.
 ```
 
-#### 3. 传感器发光（Sensor Glow）
+#### 2. Exploded View
 
 ```
-产品表面的传感器区域开始发出微弱的光芒——
-红外传感器亮起暗红色脉冲，激光雷达发射绿色扫描线，
-多个传感器依次激活，光点如呼吸般明灭，
-暗示产品在感知周围环境。光线在产品金属表面形成彩色反射。
+Product explodes and expands instantly, all components ejecting along the central axis to their positions—Top: lens component suspended and rotating, glass lens refracting iridescent spots; Middle: motherboard and chipsets expanding horizontally, circuit textures emitting green micro-pulse light; Bottom: battery module and cooling system sinking vertically, metal cooling fins reflecting sharp silver highlights. Overall symmetrical exploded view, strong industrial design feel.
 ```
 
-#### 4. 能量流动（Energy Flow）
+#### 3. Precision Assembly Snap-back
 
 ```
-一道蓝色的能量光线从充电接口注入，
-沿产品内部电路板的纹理路径高速流动，
-光线分叉、汇聚、再分叉，照亮沿途的芯片和元器件，
-最终汇聚至电池模块，电池图标从红色渐变为满格绿色，
-发出一圈扩散的能量脉冲波。
+Components snap back at high speed—cooling module home first with a metal collision micro-vibration; motherboard sliding precisely into slot, circuits immediately lighting up with pulse lights; lens module rotating and screwing in, glass surface flashing a highlight; outer casing locking final, a white light flash along the seam, product returning to complete form with surface reflecting like new.
+```
+
+**Rhythm Points**: disassembly takes 2-3 seconds (slow), assembly snap-back takes 0.8-1.2 seconds (fast), speed contrast creates impact.
+
+---
+
+## III. Feature Visualization Design
+
+#### 1. Screen Activation
+
+```
+Product screen starts from completely black, a pixel lights up from the center, light diffusing outwards in a wave pattern, screen content gradually emerging—interface elements appearing in sequence, icons sliding in from below, screen light illuminating the front of the product and surrounding environment, casting a colored screen reflection on the tabletop.
+```
+
+#### 2. Digits Ticking
+
+```
+Frame focuses on the product screen, digits ticking at high speed—numbers next to the battery icon rising rapidly from 00:00:00, numbers rolling like an old flip-clock, each digit with faint motion blur, finally freezing at 04:00:00, digits emitting pulsating golden light, implying ultra-long battery life. The entire process completes in 1.5 seconds.
+```
+
+#### 3. Sensor Glow
+
+```
+Sensors on the product surface emit faint glow—infrared sensor lighting up with a dark red pulse, lidar emitting a green scanning line, multiple sensors activated in sequence, light points breathing, implying the product is sensing surroundings. Light forms colored reflections on the metal surfaces.
+```
+
+#### 4. Energy Flow
+
+```
+A blue energy line injected from the charging port, flowing rapidly along the circuit board textures inside the product, branching, converging, and branching again, illuminating chips and components along the way, finally gathering at the battery module, the battery icon transitioning from red to full grid green, emitting a circle of diffusing energy pulse waves.
 ```
 
 ---
 
-### 四、材质微距系统
+## IV. Material Macro System
 
-#### 材质微距速查表
+#### Material Macro Quick Reference
 
-| 材质类型 | 微距描述关键词 | 光影配合 |
+| Material Type | Macro Description Keywords | Lighting Match |
 |---------|-------------|---------|
-| 金属拉丝 | 密集的平行拉丝纹理，每道划痕反射不同角度光线 | 侧光 45°慢速扫过 |
-| 玻璃折射 | 光线穿透后形成彩虹色散，边缘微棱镜效果 | 逆光/穿透光 |
-| 碳纤维编织 | 交叉编织形成规律菱形图案 | 低角度侧光 |
-| 液态流体 | 粘稠液体缓慢流动，液面反射如镜面 | 顶光+环境反射 |
-| 陶瓷釉面 | 如玉石般温润，微气泡在釉层下若隐若现 | 柔光散射 |
-| 皮革纹理 | 毛孔、褶皱和使用痕迹，边缘手工缝线 | 暖色侧光 |
-| 阳极氧化铝 | 细腻磨砂质感，不同角度呈现微妙色彩变化 | 渐变光扫过 |
+| Brushed Metal | Dense parallel brushed textures, each scratch reflecting light at different angles | Side light sweeps slowly at 45° |
+| Glass Refraction | Light penetrating to form rainbow dispersion, micro-prism effects at edges | Backlighting / penetrating light |
+| Carbon Fiber Weave | Cross-woven forming regular diamond patterns | Low-angle side lighting |
+| Liquid Fluid | Viscous liquid flowing slowly, liquid surface reflecting like a mirror | Top lighting + environmental reflections |
+| Ceramic Glaze | Jade-like warm sheen, micro-bubbles shimmering under the glaze layer | Soft light scattering |
+| Leather Texture | Pores, creases, and usage marks, manual stitching at edges | Warm side lighting |
+| Anodized Aluminum | Fine matte texture, subtle color shifts at different angles | Gradient light sweeping |
 
-#### 材质微距运镜
+#### Material Macro Camera Movement
 
 ```
-镜头贴近产品表面至极致微距（模拟微距镜头 1:1 放大倍率），
-沿材质纹理方向缓慢滑行，景深极浅仅有毫米级焦平面，
-焦点随滑行移动，依次揭示材质的不同层次细节——
-从拉丝纹理到倒角高光到接缝精度，
-最后镜头缓慢拉出，材质细节渐渐汇聚成产品完整轮廓。
+Camera close to the product surface to extreme macro (simulating macro lens 1:1 magnification), sliding slowly along the material texture direction, extremely shallow depth of field of only millimeter scale focal plane, focus moving with the slide, revealing different layers of material details in sequence—from brushed texture to chamfer highlights to seam precision, finally camera pulling back slowly, material details gradually gathering into the complete outline of the product.
 ```
 
 ---
 
-### 五、六阶段节奏模型
+## V. Six-Stage Rhythm Model
 
-纯产品展示型 TVC 的标准节奏：
+Pure product display TVC standard rhythm:
 
 ```
-超慢揭示 → 悬浮拆解 → 精密合拢 → 功能激活 → 微距潜入 → 品牌定格
+Ultra-slow Reveal → Suspended Disassembly → Precision Closure → Feature Activation → Macro Dive → Brand Freeze-frame
 ```
 
-| 阶段 | 节奏 | 运镜 | 产品状态 |
+| Stage | Rhythm | Camera Movement | Product State |
 |------|------|------|---------|
-| **超慢揭示** | 极慢 / 静止 | 固定→微推 | 全黑中轮廓光逐步勾勒 |
-| **悬浮拆解** | 慢→渐快 | 弧形环绕 | 组件分离，内部暴露 |
-| **精密合拢** | 爆发 | 多角度快切 | 组件高速回弹归位 |
-| **功能激活** | 中速脉冲 | 推近至特写 | 屏幕点亮/传感器发光 |
-| **微距潜入** | 超慢 | 微距滑行 | 材质微观细节放大 |
-| **品牌定格** | 静止 | 弹射拉远→定格 | 产品完美形态+Logo |
+| **Ultra-slow Reveal** | Extremely slow / still | Fixed -> micro push | Outlined by rim light step-by-step in pure black |
+| **Suspended Disassembly** | Slow -> gradually faster | Arc orbit | Components separating, interior exposed |
+| **Precision Closure** | Explosive | Multi-angle quick cuts | Components snapping back at high speed |
+| **Feature Activation** | Medium speed pulse | Push close to close-up | Screen lighting up / sensors glowing |
+| **Macro Dive** | Ultra-slow | Macro sliding | Material micro details magnified |
+| **Brand Freeze-frame** | Still | Eject pull back -> freeze | Product perfect form + Logo |
 
-#### 阶段间转场编排
+#### Stage Transitions
 
-- 超慢揭示 → 悬浮拆解：轮廓光照亮全貌后，组件"呼吸式"微振→分离
-- 悬浮拆解 → 精密合拢：组件悬停 0.3s 静默→突然加速回弹
-- 精密合拢 → 功能激活：合拢瞬间白光闪线→屏幕从该光点扩散亮起
-- 功能激活 → 微距潜入：屏幕像素→镜头穿入→进入材质微观世界
-- 微距潜入 → 品牌定格：材质纹理逐渐模糊→弹射拉远至全景
+- Ultra-slow Reveal -> Suspended Disassembly: After the rim light illuminates the whole view, components "breathe" micro-vibrate -> separate.
+- Suspended Disassembly -> Precision Closure: Components hover for 0.3s still -> sudden acceleration snap-back.
+- Precision Closure -> Feature Activation: White light flash at the snap-back moment -> screen diffusing and lighting up from the light point.
+- Feature Activation -> Macro Dive: Screen pixels -> camera lens penetrating -> entering material micro world.
+- Macro Dive -> Brand Freeze-frame: Material texture gradually blurring -> eject pulling back to panorama.
 
 ---
 
-### 六、完整 Multi-Phase 产品视频示例
+## VI. Complete Multi-Phase Product Video Examples
 
-#### 示例 1：运动相机（10秒，5 Phase）
+#### Example 1: Action Camera (10s, 5 Phases)
 
-**产品**：高端运动相机，主打防水、超广角、超强防抖
-
-```
-Phase 1（0s-2s）：暗调悬念揭示
-镜头运动：静止→微推
-产品状态：纯黑背景中，一道锐利的轮廓光从产品边缘亮起，缓慢勾勒出运动相机的方正轮廓。
-光影设计：Rim Light 从后方 270°环绕勾勒，正面几乎全黑，只见轮廓线。
-材质焦点：轮廓光扫过时，隐约可见铝合金机身的拉丝纹理。
-
-Phase 2（2s-4s）：悬浮拆解
-镜头运动：弧形环绕，从正面到 3/4 俯视
-产品状态：相机组件开始悬浮分离——防水外壳向上漂浮，露出内部精密结构；
-超广角镜头模组向前旋转分离，多层镀膜玻璃折射出彩虹光斑；
-防抖陀螺仪模块悬浮旋转展示。各组件间蓝色能量线连接。
-光影设计：侧光逐渐升起，精准照亮每个分离的组件。
-功能揭示：超广角镜头的多层镀膜结构、机械防抖的陀螺仪模块。
-
-Phase 3（4s-5.5s）：功能激活
-镜头运动：快速推入至屏幕特写
-产品状态：组件高速回弹装配归位（0.5s），外壳扣合发出白光闪线；
-后屏瞬间点亮，界面显示 POV 极限运动画面（跳伞第一视角），
-屏幕左上角防水图标亮起蓝色光芒。
-光影设计：屏幕光芒成为主光源，照亮产品正面和周围环境。
-功能揭示：屏幕显示效果、防水性能暗示。
-
-Phase 4（5.5s-7.5s）：爆发旋转
-镜头运动：高速 360°环绕旋转
-产品状态：相机在画面中央悬浮，高速旋转展示全部外观——
-正面镜头、侧面按键、底部三脚架接口、顶部录制按钮。
-旋转中每个面依次被追光照亮。
-光影设计：追光旋转，高光始终锁定在旋转经过的关键特征上。
-材质焦点：旋转中清晰可见铝合金拉丝纹理与橡胶防滑握持区的对比。
-
-Phase 5（7.5s-10s）：微距潜入 + 品牌定格
-镜头运动：极速推入至镜头玻璃表面→穿越镜头组→弹射拉远至全景
-产品状态：镜头潜入相机镜头内部，穿越多层镀膜玻璃（光线在镜片间折射、色散），
-穿过 CMOS 传感器表面（像素阵列微距），弹射拉远至全景——
-产品悬浮于画面中央，下方浮现品牌 Logo 与 Slogan。
-光影设计：穿越时内部光线折射；弹出后回归 Low-key 棚光定格。
-材质焦点：镜片镀膜的光学色散、CMOS 传感器的微观像素阵列。
-```
-
-#### 示例 2：奢华精华液（10秒，5 Phase）
-
-**产品**：高端护肤精华液，主打黄金成分、奢华质感、抗衰修护
+**Product**: High-end action camera, waterproof, ultra-wide-angle, ultra-strong stabilization
 
 ```
-Phase 1（0s-2s）：奢华帷幕揭示
-镜头运动：缓慢下摇
-产品状态：画面顶部，一滴金色精华液在全黑背景中缓慢坠落，
-液滴表面反射出整个环境的倒影，液体粘稠而饱满，
-带有蜂蜜般的拉丝质感。液滴下坠的轨迹留下一道金色光痕。
-光影设计：顶部单束聚光灯追踪液滴，液滴如一颗微型金色星球。
-材质焦点：精华液的粘稠度、表面张力、光泽折射。
+Phase 1 (0s-2s): Dark Suspense Reveal
+Camera Movement: Still -> micro push
+Product State: Pure black background, a sharp rim light lights up from the product edge, slowly outlining the square silhouette of the action camera.
+Lighting Design: Rim Light wraps 270° from the rear, front almost completely black, only outline visible.
+Material Focus: When the rim light sweeps, brushed texture of the aluminum alloy body is faintly visible.
 
-Phase 2（2s-4s）：瓶身现身
-镜头运动：弧形环绕，从侧面到 3/4 正面
-产品状态：金色液滴落入画面下方的精华瓶口，涟漪荡开；
-镜头下摇揭示整个瓶身——磨砂玻璃瓶体，内部金色液体微微流动，
-金属瓶盖反射出锐利的高光，瓶身浮雕品牌纹样。
-光影设计：侧光从左侧 45°照射，玻璃瓶体产生通透的光影层次，
-液体内部折射出温暖的琥珀色光芒。
-材质焦点：磨砂玻璃的半透明质感、金属瓶盖的镜面反射。
+Phase 2 (2s-4s): Suspended Disassembly
+Camera Movement: Arc orbit, from front to 3/4 high view
+Product State: Camera components begin to suspend and separate—waterproof case drifting upwards, revealing internal precision structure; ultra-wide-angle lens module rotating and separating forwards, multi-layer coated glass refracting iridescent spots; stabilization gyroscope module suspended and rotating. Blue energy lines connect components.
+Lighting Design: Side light gradually rises, precisely illuminating each separated component.
+Feature Reveal: Multi-layer coated structure of the ultra-wide-angle lens, mechanical stabilization gyroscope module.
 
-Phase 3（4s-6s）：液态流动微距
-镜头运动：极致微距推入瓶身玻璃表面
-产品状态：镜头贴近瓶身，穿透磨砂玻璃层，进入瓶内液体世界——
-金色精华液内部有微小的金箔颗粒悬浮流动，
-液体形成缓慢的对流漩涡，金箔在光线中闪烁。
-光影设计：背透光穿过液体，金箔颗粒如漂浮的星辰。
-功能揭示：黄金微粒活性成分的可视化。
+Phase 3 (4s-5.5s): Feature Activation
+Camera Movement: Rapid push to screen close-up
+Product State: Components snap back and assemble at high speed (0.5s), outer case locking with a white light flash; rear screen immediately lights up, interface displaying POV extreme sports footage (skydiving first-person perspective), waterproof icon at the screen top-left glowing blue.
+Lighting Design: Screen light becomes primary light source, illuminating the front of the product and surroundings.
+Feature Reveal: Screen display effect, waterproof performance hint.
 
-Phase 4（6s-8s）：肌肤意象
-镜头运动：匀速侧移 + 浅焦过渡
-产品状态：画面过渡至抽象的肌肤微距意象——光滑的肌肤纹理表面，
-一滴精华液落在肌肤上，迅速渗透扩散，扩散轨迹发出微弱金色光芒，
-肌肤纹理随扩散变得更加细腻光滑（视觉隐喻：抗衰修护）。
-光影设计：柔和的暖色散射光，皮肤表面的 SSS 次表面散射效果。
-功能揭示：渗透吸收、肌肤修护效果的视觉化。
+Phase 4 (5.5s-7.5s): Explosive Rotation
+Camera Movement: High-speed 360° orbit rotation
+Product State: Camera suspended at the center of the frame, rotating at high speed to display all aspects—front lens, side buttons, bottom tripod mount, top recording button. Each face illuminated by a spotlight in sequence.
+Lighting Design: Spotlight rotates, highlights always locked on key features rotating past.
+Material Focus: Contrast between brushed aluminum texture and non-slip rubber grip area clearly visible in rotation.
 
-Phase 5（8s-10s）：品牌定格
-镜头运动：缓慢拉远至中景定格
-产品状态：产品瓶身置于画面中央偏右，左侧一枝干花/金色叶片做前景点缀，
-瓶身被温暖的侧光照亮，背景为深色渐变（深棕→黑）。
-品牌 Logo 在画面左侧优雅浮现，下方 Slogan 以细衬线字体排列。
-光影设计：经典美妆广告布光——柔和主光+侧面轮廓光+底部反射光。
+Phase 5 (7.5s-10s): Macro Dive + Brand Freeze-frame
+Camera Movement: Rapid push to lens glass surface -> penetrate lens group -> eject pull back to panorama
+Product State: Lens dives into the camera lens interior, traversing multi-layer coated glass (light refracting and dispersing between lenses), traversing CMOS sensor surface (microscopic pixel array macro), ejecting and pulling back to panorama—product suspended at the center, brand Logo and Slogan emerging below.
+Lighting Design: Light refracts inside during penetration; returns to Low-key studio lighting upon ejection.
+Material Focus: Optical dispersion of lens coatings, microscopic pixel array of CMOS sensor.
 ```
 
-#### 示例 3：先锋银饰手链（10秒，5 Phase）
+#### Example 2: Luxury Essence Serum (10s, 5 Phases)
 
-**产品**：手工锻造银色手链，主打独立态度、工艺质感、先锋设计
-**出镜策略**：有人物——女性手腕/手部特写（不露脸），穿极简黑色服装，皮肤干净
+**Product**: High-end skincare essence serum, gold ingredients, luxury texture, anti-aging repair
 
 ```
-Phase 1（0s-2s）：工艺溯源——锻造
-镜头运动：微距静止→缓推
-产品状态：纯黑背景，一块粗粝银块在画面中央。侧光缓慢升起，
-勾勒出银块表面的锤打纹理。银块边缘开始泛出微弱的炽热红光——
-暗示刚从锻炉中取出。表面可见手工锻打留下的不规则凹痕，
-每一道痕迹都是工匠的签名。
-光影设计：单侧硬光，强调银块的粗粝质感。微弱红光从底部向上渗透。
-材质焦点：原银的颗粒感、锤打凹痕的不规则纹理。
+Phase 1 (0s-2s): Luxury Veil Reveal
+Camera Movement: Slow pan down
+Product State: At the top of the frame, a drop of golden essence slowly falls in a pure black background, the droplet surface reflecting the entire environment, liquid viscous and plump, with a honey-like stretch texture. The falling path of the droplet leaves a golden light trace.
+Lighting Design: Single spotlight from top tracks the droplet, droplet like a miniature golden planet.
+Material Focus: Viscosity, surface tension, and luster refraction of the essence.
 
-Phase 2（2s-4s）：蜕变——从原银到成品
-镜头运动：快推→溶解过渡
-产品状态：镜头快速推向银块表面微距——银色颗粒充满画面；
-溶解过渡至成品手链的微距特写：同样的银色，但表面已被打磨为
-哑光拉丝质感，链节之间的铰接结构在侧光下投射出精密阴影。
-光影设计：过渡前后光源方向一致（侧光），实现材质变化但光影连续。
-材质焦点：哑光拉丝银面、链节铰接处的精密间隙。
+Phase 2 (2s-4s): Bottle Emergence
+Camera Movement: Arc orbit, from side to 3/4 front view
+Product State: Golden droplet falls into the essence bottle mouth below, ripples spreading; camera pans down to reveal the entire bottle—matte glass bottle body, golden liquid inside flowing slightly, metal cap reflecting sharp highlights, bottle face embossed with brand pattern.
+Lighting Design: Side lighting from the left 45°, glass bottle creating translucent light and shadow layers, warm amber glow refracted inside the liquid.
+Material Focus: Translucent texture of matte glass, mirror reflection of the metal cap.
 
-Phase 3（4s-6s）：佩戴——手腕登场
-镜头运动：缓拉远→微弧移
-产品状态：镜头从手链微距缓慢拉远，银链逐渐完整显现——
-它环绕在一只女性手腕上。手腕缓慢翻转，银链随手势流动，
-链节之间产生微妙的金属碰撞光斑。手腕皮肤干净、指甲无色，
-黑色衣袖边缘刚好露出手腕。
-光影设计：侧光从手腕一侧打入，银链反射形成流动光带，皮肤呈现温暖的象牙色调。
-材质焦点：银与肌肤的触感对比——冷硬金属与温暖皮肤。
+Phase 3 (4s-6s): Liquid Flow Macro
+Camera Movement: Extreme macro push into bottle glass surface
+Product State: Camera close to bottle body, penetrating matte glass layer, entering the bottle's liquid world—golden essence with tiny gold foil particles suspended and flowing, liquid forming a slow convection vortex, gold foil shimmering in the light.
+Lighting Design: Backlight penetrates the liquid, gold foil particles like floating stars.
+Feature Reveal: Visualization of active gold foil micro-particles.
 
-Phase 4（6s-8s）：姿态——先锋态度
-镜头运动：跟拍手部动态
-产品状态：手从画面下方缓慢抬起，手指微张呈放松姿态——
-银链在手腕上随重力微垂，一侧紧贴皮肤，另一侧自然悬空。
-手掌微微握拳后松开，银链在手腕上产生轻微位移和光影变化。
-背景从纯黑过渡为模糊的混凝土灰色——暗示建筑美学空间。
-光影设计：侧光主调不变，背景出现微弱的环境散射光。
-动态焦点：银链随手势的自然垂坠和光影流转。
+Phase 4 (6s-8s): Skin Metaphor
+Camera Movement: Constant speed side shift + shallow focus transition
+Product State: Frame transitions to abstract skin macro metaphor—smooth skin texture surface, a drop of essence falls on skin, rapidly absorbing and diffusing, diffusion path emitting faint golden light, skin texture becoming finer and smoother (visual metaphor: anti-aging repair).
+Lighting Design: Soft warm scattered light, SSS subsurface scattering effect on skin surface.
+Feature Reveal: Visualization of penetration absorption and skin repair effects.
 
-Phase 5（8s-10s）：定格
-镜头运动：缓推回微距→静止
-产品状态：手腕静止于画面中央偏左，银链自然垂落于手腕最细处。
-镜头缓推至银链特写——最后定格在一个链节的微距：
-哑光拉丝表面、铰接处的精密间隙、侧光勾勒出的银色轮廓线。
-画面右侧大面积留白，用于后期放置品牌标识。
-光影设计：回归开场的单侧硬光，首尾呼应。画面干净、克制、留白充足。
+Phase 5 (8s-10s): Brand Freeze-frame
+Camera Movement: Slow pull back to medium shot freeze
+Product State: Product bottle placed center-right, a branch of dried flower/golden leaf on the left as foreground decoration, bottle body illuminated by warm side light, background dark gradient (dark brown -> black). Brand Logo elegantly emerges on the left, Slogan arranged in thin serif font below.
+Lighting Design: Classic beauty ad lighting—soft key light + side rim light + bottom reflection light.
+```
+
+#### Example 3: Avant-garde Silver Bracelet (10s, 5 Phases)
+
+**Product**: Hand-forged silver bracelet, independent attitude, craft texture, avant-garde design
+**Presenter Strategy**: Hand/wrist close-up of a female (no face shown), wearing minimalist black clothing, skin clean
+
+```
+Phase 1 (0s-2s): Craft Source—Forging
+Camera Movement: Macro still -> slow push
+Product State: Pure black background, a rough silver block at the center. Side lighting slowly rises, outlining the hammered texture on the silver block surface. Edges of the silver block begin to glow with faint hot red light—implying just taken out of the forge. Surface showing irregular dents left by hand-hammering, each mark the artisan's signature.
+Lighting Design: Single side hard light, emphasizing silver block's rough texture. Faint red light penetrating upwards from bottom.
+Material Focus: Graininess of raw silver, irregular texture of hammered dents.
+
+Phase 2 (2s-4s): Transformation—From Raw Silver to Finished Product
+Camera Movement: Fast push -> dissolve transition
+Product State: Camera rapidly pushes to silver block surface macro—silver particles filling the screen; dissolve transition to finished bracelet macro close-up: same silver color, but surface polished to a matte brushed texture, joint structures between links casting precise shadows under side lighting.
+Lighting Design: Light source direction consistent before and after transition (side light), achieving material change but continuous lighting.
+Material Focus: Matte brushed silver surface, precise gaps at link joints.
+
+Phase 3 (4s-6s): Wear—Wrist Appearance
+Camera Movement: Slow pull back -> micro arc shift
+Product State: Camera slowly pulls back from bracelet macro, silver chain gradually fully revealed—wrapped around a female wrist. Wrist slowly turns, silver chain flowing with the gesture, subtle metallic collision sparks generated between links. Wrist skin clean, nails colorless, black clothing sleeve edge just exposing wrist.
+Lighting Design: Side lighting from one side of the wrist, silver chain reflecting a flowing light band, skin presenting warm ivory tone.
+Material Focus: Touch contrast between silver and skin—cold hard metal and warm skin.
+
+Phase 4 (6s-8s): Posture—Avant-garde Attitude
+Camera Movement: Tracking hand motion
+Product State: Hand slowly raises from the bottom, fingers slightly open in a relaxed posture—silver chain hanging naturally on the wrist under gravity, one side snug to skin, other side naturally suspended. Hand slightly fists then relaxes, silver chain generating slight displacement and lighting changes. Background transitions from pure black to blurred concrete gray—implying architectural aesthetic space.
+Lighting Design: Side lighting primary tone unchanged, faint environmental scattered light in background.
+Dynamic Focus: Natural drape and lighting flow of the silver chain with hand gestures.
+
+Phase 5 (8s-10s): Freeze Frame
+Camera Movement: Slow push back to macro -> still
+Product State: Wrist still center-left, silver chain draping naturally at the narrowest part of the wrist. Camera pushes to silver chain close-up—finally freezing on the macro of a single link: matte brushed surface, precise gaps at joints, silver outline sculpted by side lighting. Large area blank space on the right of the screen for brand logo.
+Lighting Design: Returning to single side hard light at the opening, echoing start and end. Clean, restrained, ample blank space.
 ```
 
 ---
 
-## Part 4: 品牌世界镜头
+## Part 4: Brand World Shots
 
 ---
 
-### 一、品牌世界↔产品世界切换技法
+### I. Brand World ↔ Product World Transition Techniques
 
-品牌世界（Brand World）是产品的使用场景；产品世界（Product World）是棚拍特写。两个世界在 TVC 中反复切换，切换的质量决定了广告的高级感。
+The brand world is the usage scene of the product; the product world is the studio close-up. The two worlds switch repeatedly in TVC, and the quality of the switch determines the premium feel of the ad.
 
-#### 三种核心切换技法
+#### Three Core Transition Techniques
 
-##### 技法一：Match Cut 动势传递
+##### Technique 1: Match Cut Motion Transfer
 
-**品牌世界 → 产品世界**：
-
-```
-[品牌世界] 滑雪者从雪坡飞出，身体在空中旋转——
-旋转到 180°的瞬间无缝切换至——
-[产品世界] 产品以相同的旋转角速度出现在纯黑背景中，
-延续旋转动势完成 360°展示，在 3/4 侧面角度减速定格。
-```
-
-**产品世界 → 品牌世界**：
+**Brand World → Product World**:
 
 ```
-[产品世界] 产品屏幕点亮，光芒向画面四周扩散——
-光芒充满整个画面的瞬间无缝切换至——
-[品牌世界] 从白色过曝中渐显出广阔的雪山全景，
-一辆越野车在雪地上疾驰，扬起的雪雾与屏幕光芒的白色无缝衔接。
+[Brand World] Skier flies off snow slope, body rotating in air—
+At the moment of rotating 180°, seamless transition to—
+[Product World] Product appears in a pure black background at the same angular velocity, continuing the rotation motion to complete a 360° display, decelerating to freeze at 3/4 side view.
 ```
 
-**提示词模板**：
-```
-[前一世界的运动主体]在画面中做[具体运动]——
-在[运动到达特定位置/角度/速度]的瞬间无缝切换至——
-[后一世界]以相同的[运动方向/角速度/速度矢量]延续动势，
-[后续画面的展开]。两个画面的[形状/运动轨迹/速度]完美衔接，镜头流畅不中断。
-```
-
-##### 技法二：尺度穿越（Scale Shift）
-
-**宏观 → 微观**：
+**Product World → Brand World**:
 
 ```
-[品牌世界] 航拍俯瞰城市夜景，万千灯火闪烁——
-镜头急速俯冲向城市中一个发光的点——
-[产品世界] 穿透层层尺度后，发光的点变成产品屏幕上的一个像素，
-镜头稳定在产品屏幕微距，界面细节清晰可见。
+[Product World] Product screen lights up, light diffusing outwards—
+At the moment light fills the entire screen, seamless transition to—
+[Brand World] From white overexposure, wide snow mountain panorama gradually emerges, an off-road vehicle racing on snow, kicked-up snow mist seamlessly connecting with the white screen light.
 ```
 
-**微观 → 宏观**：
-
+**Prompt Template**:
 ```
-[产品世界] 镜头贴近产品表面微距，材质纹理充满画面——
-镜头突然弹射后退，极速拉远——
-[品牌世界] 产品纹理渐变为高空俯瞰的地面纹理（沙漠裂纹/农田几何），
-揭示产品正身处广袤的自然风景之中。
+[Motion subject of former world] performing [specific motion] in the frame—
+At the moment of [motion reaching specific position/angle/speed], seamless transition to—
+[Latter world] continuing the motion with same [motion direction/angular velocity/velocity vector], [subsequent visual unfolding]. The [shape/motion trajectory/speed] of the two frames connect perfectly, camera flowing smoothly.
 ```
 
-##### 技法三：介质穿越（Medium Penetration）
+##### Technique 2: Scale Shift
 
-**穿入产品 → 穿出到品牌世界**：
-
-```
-[产品世界] 镜头对准产品镜头组正面，开始缓慢推入——
-穿过第一层镀膜玻璃（表面产生彩虹色散），
-穿过第二层透镜（光线折射弯曲），
-穿过 CMOS 传感器阵列（像素方阵的微观世界）——
-[品牌世界] 穿出后画面是从该相机视角拍摄的壮丽风景，
-暗示"产品眼中的世界"。
-```
-
-**品牌世界 → 穿入产品**：
+**Macro → Micro**:
 
 ```
-[品牌世界] 精华液在手指尖缓慢滴落——
-液滴落入瓶口的瞬间，镜头跟随液滴穿入瓶内——
-[产品世界] 进入瓶内液体的微观世界，
-金箔粒子在琥珀色液体中悬浮流动如星辰。
+[Brand World] Aerial view of city night scene, thousands of lights twinkling—
+Camera rapidly dives toward a glowing point in the city—
+[Product World] After traversing layers of scale, the glowing point becomes a pixel on the product screen, camera stabilizing on the product screen macro, interface details clearly visible.
 ```
 
-#### 切换频率与节奏控制
+**Micro → Macro**:
 
-| 视频时长 | 建议切换次数 | 节奏策略 |
+```
+[Product World] Camera close to product surface macro, material texture filling the frame—
+Camera suddenly ejects back, rapidly pulling away—
+[Brand World] Product texture transitions to high-altitude ground texture (desert cracks/agricultural geometry), revealing the product is in the middle of vast natural landscapes.
+```
+
+##### Technique 3: Medium Penetration
+
+**Penetrate into Product → Emerge into Brand World**:
+
+```
+[Product World] Camera aligned with lens group front, slowly pushing in—
+Traversing first layer coated glass (iridescent dispersion on surface),
+Traversing second layer lens (light refracting and bending),
+Traversing CMOS sensor array (microscopic pixel grid)——
+[Brand World] Emerging to reveal a magnificent landscape shot from the camera's perspective, implying "the world through the product's eyes".
+```
+
+**Brand World → Penetrate into Product**:
+
+```
+[Brand World] Essence serum slowly drops at fingertip—
+At the moment droplet falls into bottle mouth, camera follows droplet penetrating bottle—
+[Product World] Entering bottle liquid micro world, gold foil particles suspended and flowing like stars in amber liquid.
+```
+
+#### Transition Frequency & Rhythm Control
+
+| Video Duration | Recommended Transitions | Rhythm Strategy |
 |---------|------------|---------|
-| 10s | 1-2 次 | 品牌世界开场→产品世界收束 |
-| 15s | 2-3 次 | 品牌→产品→品牌→定格 |
-| 30s | 4-6 次 | 自由穿梭，前半段品牌主导，后半段产品主导 |
+| 10s | 1-2 times | Brand world opening -> product world resolution |
+| 15s | 2-3 times | Brand -> product -> brand -> freeze frame |
+| 30s | 4-6 times | Free crosscut, brand-dominant first half, product-dominant second half |
 
-**切换节奏原则**：
-- 每次切换后至少停留 2-3s 再切回
-- 最后一次切换必须是**切入产品世界**——TVC 最终落点永远是产品本身
-
----
-
-## Part 5: TVC 时长模板
+**Transition Rhythm Principles**:
+- Remain in each world for at least 2-3s after transitioning before switching back.
+- The final transition must be **into the product world**—the TVC final resolution is always the product itself.
 
 ---
 
-### 一、TVC 30s 双段节奏模板
+## Part 5: TVC Duration Templates
 
-#### 模板 A：品牌世界穿梭型 30s
+---
 
-```
-═══ 第一段（0-15s）：品牌世界主导，建立情绪 ═══
+### I. TVC 30s Dual-segment Rhythm Templates
 
-Phase 1 (0-3s): 品牌世界开场
-  极限运动/生活场景的广角大全景，建立世界观和能量感。
-  快节奏运镜（航拍/跟随/手持），主体在运动中。
-
-Phase 2 (3-6s): 产品初现
-  [Match Cut] 场景运动→产品旋转。
-  产品以 3/4 角度缓慢环绕展示，轮廓光勾勒造型。
-  第一次揭示产品全貌。
-
-Phase 3 (6-10s): 品牌世界升级
-  [Match Cut] 产品材质纹理→场景元素纹理。
-  场景升级（更极限/更动态/更情绪化），
-  产品在使用中自然出现（手持/穿戴/环境融合）。
-
-Phase 4 (10-15s): 功能揭示 + 段间衔接
-  [Match Cut] 场景动作→产品功能激活。
-  产品功能可视化展示，屏幕点亮/传感器发光。
-  末尾动作为下段预留衔接点（如旋转中/光芒扩散中不收束）。
-
-═══ 第二段（15-30s）：产品主导，收束品牌 ═══
-
-Phase 5 (15-19s): 承接 + 深度拆解
-  承接上段末尾的动势。产品悬浮拆解，
-  组件分离展示内部结构，传递技术深度。
-
-Phase 6 (19-23s): 精密合拢 + 爆发旋转
-  组件高速回弹归位→爆发式 360°旋转展示。
-  速度从极快（合拢）到快（旋转）到渐慢。
-
-Phase 7 (23-27s): 微距潜入
-  镜头潜入产品表面微距——材质纹理、倒角精度、
-  光线在表面的反射与折射。超慢运镜，品质收尾。
-
-Phase 8 (27-30s): 品牌定格
-  弹射拉远至全景，产品完美定格。
-  Logo + Slogan 浮现。画面简洁高端。
-```
-
-#### 模板 B：纯产品电影型 30s
+#### Template A: Brand World Crosscut 30s
 
 ```
-═══ 第一段（0-15s）：从暗到明，揭示全貌 ═══
+═══ Segment 1 (0-15s): Brand World Dominant, Establishing Emotion ═══
 
-Phase 1 (0-3s): 暗调悬念
-  全黑，轮廓光逐步亮起，勾勒产品轮廓。
-  极慢节奏，制造期待。
+Phase 1 (0-3s): Brand World Opening
+  Wide shot of extreme sports / lifestyle scene, establishing world view and energy. Fast-paced camera movement (aerial/tracking/handheld), subject in motion.
 
-Phase 2 (3-7s): 光影觉醒
-  主光缓慢升起，产品从黑暗中浮现。
-  弧形环绕从侧面到 3/4 正面，全方位首次亮相。
+Phase 2 (3-6s): Product Debut
+  [Match Cut] Scene motion -> product rotation. Product slowly orbits and displays at a 3/4 angle, rim light outlining styling. First reveal of product full view.
 
-Phase 3 (7-11s): 悬浮拆解
-  组件分离展示，弧形环绕配合景深切换逐个聚焦。
-  蓝色能量线连接各组件，暗示内部协同。
+Phase 3 (6-10s): Brand World Upgrade
+  [Match Cut] Product material texture -> scene element texture. Scene upgraded (more extreme/dynamic/emotional), product appearing naturally in use (handheld/worn/environment integrated).
 
-Phase 4 (11-15s): 精密合拢
-  组件爆发式回弹归位，每个部件"咔嗒"到位。
-  合拢瞬间白光闪过→预留给下段屏幕点亮。
+Phase 4 (10-15s): Feature Reveal + Segment Transition
+  [Match Cut] Scene action -> product feature activation. Feature visualization display, screen lighting up / sensors glowing. End action reserves transition point for next segment (not resolving in rotation/diffusion).
 
-═══ 第二段（15-30s）：从激活到定格 ═══
+═══ Segment 2 (15-30s): Product Dominant, Resolving Brand ═══
 
-Phase 5 (15-19s): 功能激活
-  承接合拢白光→屏幕从该光点扩散亮起。
-  界面元素浮现，数字跳动，传感器逐个激活发光。
+Phase 5 (15-19s): Inheritance + Deep Disassembly
+  Inheriting previous segment end motion. Product suspended disassembly, components separating to display internal structure, conveying tech depth.
 
-Phase 6 (19-23s): 爆发旋转
-  高速 360°环绕，追光锁定旋转中的关键特征面。
-  旋转中每个面被依次照亮（正面→侧面→底部→背面）。
+Phase 6 (19-23s): Precision Closure + Explosive Rotation
+  Components snap back -> explosive 360° rotation display. Speed from extremely fast (closure) to fast (rotation) to decelerating.
 
-Phase 7 (23-27s): 微距潜入
-  从旋转减速→镜头潜入材质微距。
-  极浅景深逐层揭示材质细节（拉丝→倒角→接缝→镀膜）。
-  超慢运镜收尾。
+Phase 7 (23-27s): Macro Dive
+  Camera dives into product surface macro—material textures, chamfer highlights, light reflection/refraction on surface. Super slow camera movement, quality resolution.
 
-Phase 8 (27-30s): 品牌定格
-  材质纹理逐渐模糊→弹射拉远至全景定格。
-  产品完美姿态 + Logo + Slogan。
+Phase 8 (27-30s): Brand Freeze-frame
+  Eject pulling back to panorama, product perfectly frozen. Logo + Slogan emerging. Visual clean and high-end.
 ```
 
-#### 30s 双段衔接设计
+#### Template B: Pure Product Cinematic 30s
 
-| 衔接策略 | 描述 | 适用 |
+```
+═══ Segment 1 (0-15s): From Dark to Light, Revealing Entirety ═══
+
+Phase 1 (0-3s): Dark Suspense
+  Pure black, rim lights lighting up gradually, outlining product silhouette. Extremely slow rhythm, building anticipation.
+
+Phase 2 (3-7s): Light Awakening
+  Key light slowly rises, product emerging from darkness. Arc orbit from side to 3/4 front, first full display.
+
+Phase 3 (7-11s): Suspended Disassembly
+  Components separate, arc orbit with depth of field switching to focus individually. Blue energy lines connect components, implying internal synergy.
+
+Phase 4 (11-15s): Precision Closure
+  Components explode back to position, each snap-fitting. White light flash at closure -> reserved for screen activation in next segment.
+
+═══ Segment 2 (15-30s): From Activation to Freeze-frame ═══
+
+Phase 5 (15-19s): Feature Activation
+  Inheriting closure flash -> screen diffusing and lighting up from the light point. Interface elements emerging, digits ticking, sensors activated.
+
+Phase 6 (19-23s): Explosive Rotation
+  High-speed 360° orbit, spotlight tracking key features rotating past (front -> side -> bottom -> back).
+
+Phase 7 (23-27s): Macro Dive
+  Decelerating from rotation -> lens diving to material macro. Extremely shallow depth of field revealing details (brushed -> chamfer -> seam -> coating). Super slow camera movement.
+
+Phase 8 (27-30s): Brand Freeze-frame
+  Material texture gradually blurring -> eject pulling back to panorama freeze. Product perfect posture + Logo + Slogan.
+```
+
+#### 30s Dual-segment Transition Design
+
+| Transition Strategy | Description | Applicable |
 |---------|------|------|
-| **动势延续** | 第一段末尾的运动在第二段开头继续 | 所有类型 |
-| **光线因果** | 第一段末尾的光效成为第二段开头的光源 | 纯产品型 |
-| **场景穿越** | 镜头穿入产品→穿出到新场景 | 品牌世界型 |
-| **情绪跳板** | 第一段末尾蓄力→第二段开头爆发 | 需要高潮感 |
+| **Motion Continuity** | Motion at the end of segment 1 continues at the start of segment 2 | All types |
+| **Lighting Causality** | Lighting effects at the end of segment 1 become the light source at the start of segment 2 | Pure product type |
+| **Scene Crosscut** | Lens penetrates product -> emerges into new scene | Brand world type |
+| **Emotional Springboard** | Charge up at the end of segment 1 -> explode at the start of segment 2 | Requires climax feel |
 
 ---
 
-### 二、TVC 15s 紧凑节奏
+### II. TVC 15s Compact Rhythm
 
-#### 压缩五阶段模型
+#### Compressed Five-Stage Model
 
-| 阶段 | 时长 | 功能 | 产品状态 |
+| Stage | Duration | Function | Product State |
 |------|------|------|---------|
-| **闪现揭示** | 0-2s | 最短时间建立产品印象 | 轮廓光快速亮起 / Match Cut 入场 |
-| **核心卖点** | 2-6s | 集中展示 1-2 个核心功能 | 功能激活 / 拆解展示（二选一） |
-| **视觉高潮** | 6-10s | 最具冲击力的画面 | 爆发旋转 / 极限场景 / 微距奇观 |
-| **情绪锚点** | 10-13s | 留下一个记忆点 | 极致微距 / 情感高点 |
-| **品牌定格** | 13-15s | Logo + 产品 + Slogan | 产品最终形态定格 |
+| **Flash Reveal** | 0-2s | Establish product impression in shortest time | Rim light rapidly lighting up / Match Cut entrance |
+| **Core Selling Point** | 2-6s | Focus on displaying 1-2 core features | Feature activation / disassembly display (choose one) |
+| **Visual Climax** | 6-10s | Most impactful frames | Explosive rotation / extreme scenes / macro wonder |
+| **Emotional Anchor** | 10-13s | Leave a memory point | Extreme macro / emotional high point |
+| **Brand Freeze-frame** | 13-15s | Logo + product + Slogan | Product final form freeze-frame |
 
-#### 15s 铁律
+#### 15s Iron Rules
 
-- **单焦点原则**：15s 只传递 1 个核心记忆点
-- **禁止空镜**：每一帧都有产品或品牌相关信息
-- **转场即内容**：Match Cut 本身就是信息传递
-- **2s 定格铁律**：最后 2s 必须是静态定格
+- **Single Focus Principle**: 15s only conveys 1 core memory point.
+- **No Empty Shots**: Every frame has product or brand info.
+- **Transition is Content**: Match Cuts themselves are information delivery.
+- **2s Freeze Rule**: The final 2s must be a static freeze frame.
 
-#### 15s 紧凑示例（无线耳机）
+#### 15s Compact Example (Wireless Earbuds)
 
 ```
-风格：科技极简 / 纯黑+珠光白+冰蓝呼吸光 / Low-key 棚拍 / 无背景音乐 产品@产品多视图图片 的广告
+Style: Tech minimalist / Pure black + pearl white + ice blue breathing light / Low-key studio shot / No background music. Ad for product@product_multiview_image.
 
-Phase 1 (0-2s): 开盖揭示
-充电盒在纯黑背景中，盒盖缓慢开启——内部冰蓝呼吸灯亮起，
-两只耳机在磁力悬浮中微微上升脱离充电槽。
-镜头从正面微推。盒盖开启的弧线引导视线向上。
+Phase 1 (0-2s): Lid Opening Reveal
+The charging case is in a pure black background, the lid slowly opens—interior ice blue breathing light lights up, two earbuds rise slightly in magnetic suspension out of slots. Camera micro pushes from front. The arc of lid opening guides the eye upwards.
 
-Phase 2 (2-6s): 悬浮 + 功能激活
-两只耳机完全脱离充电盒，在画面中悬浮旋转。
-左耳机剖面透视亮起——内部芯片电路发出脉冲光，
-降噪麦克风阵列依次亮起绿色指示点（暗示主动降噪）。
-右耳机表面一圈触控区亮起冰蓝色弧线（暗示触控操作）。
+Phase 2 (2-6s): Suspension + Feature Activation
+Two earbuds completely separate from case, suspended and rotating. Left earbud cross-section lights up—internal chipset circuits emit pulse lights, noise-canceling mic arrays light up green points (active noise cancellation). Right earbud surface touch zone lights up an ice blue arc (touch control).
 
-Phase 3 (6-10s): 爆发旋转 + 微距
-两只耳机高速对向旋转 360°展示全貌——
-旋转减速后镜头急推至耳机外壳微距，
-珠光白陶瓷表面的纳米级颗粒纹理充满画面，
-侧光扫过时颜色从纯白微偏向淡蓝虹彩。
+Phase 3 (6-10s): Explosive Rotation + Macro
+Two earbuds rotate counter to each other 360° at high speed to show full view—after decelerating, camera pushes to earbud casing macro, pearl white ceramic surface nanometer grain texture filling the frame, color shifting slightly from pure white to light blue iridescence under side lighting.
 
-Phase 4 (10-13s): 回归充电盒
-镜头弹射拉远。两只耳机缓缓降落归位充电盒，
-磁吸对位的瞬间发出微弱的白光脉冲。
-盒盖缓慢合拢，表面弧线上的品牌 Logo 被轮廓光照亮。
+Phase 4 (10-13s): Return to Charging Case
+Camera ejects and pulls back. Two earbuds slowly descend back into charging case, emitting a faint white pulse at magnetic alignment. Lid closes slowly, brand Logo on the lid surface illuminated by rim light.
 
-Phase 5 (13-15s): 品牌定格
-充电盒以 3/4 低角度静置于画面中央。
-盒盖缝隙透出一丝冰蓝呼吸光。
-品牌 Logo 在上方浮现，Slogan 在下方以细字排列。
+Phase 5 (13-15s): Brand Freeze-frame
+Charging case rests at a 3/4 low angle at the center of the frame. Lid crack filters a slice of ice blue breathing light. Brand Logo emerges above, Slogan below in thin font.
 
-光影要求：全片 Low-key 纯黑背景，产品自发光（呼吸灯/指示灯/脉冲光）
-为主要光源，辅以精准的轮廓光勾勒产品边缘。
+Lighting Requirements: Low-key pure black background, product self-glow (breathing light / indicators / pulse lights) as main light source, with precise rim lighting outlining product edges.
 ```
 
 ---
 
-## Appendix: 产品视频提示词自检清单
+## Appendix: Product Video Prompt Self-Check Checklist
 
-- [ ] **每个 Phase 有精确的秒数标注**（总时长=各 Phase 之和）
-- [ ] **运镜有速度变化**（有快慢节奏对比）
-- [ ] **至少一个 Phase 包含材质微距**
-- [ ] **至少一个 Phase 包含功能可视化**
-- [ ] **光影有叙事弧线**（有变化和递进）
-- [ ] **有 Match Cut 或视觉过渡**（Phase 间有动势/色彩延续）
-- [ ] **End Frame 元素精简**（只有产品+Logo+Slogan）
-- [ ] **材质描述有物理细节**（不是"金属质感"，而是"拉丝纹理在侧光下形成流动高光"）
-- [ ] **产品状态有变化弧线**（从静止→拆解→激活→展示→定格）
-- [ ] **品牌调性一致**
+- [ ] Each Phase has precise seconds marked (total duration = sum of Phase seconds)
+- [ ] Camera movement has speed variation (fast and slow tempo contrast)
+- [ ] At least one Phase contains material macro
+- [ ] At least one Phase contains feature visualization
+- [ ] Lighting has a narrative arc (variation and progression)
+- [ ] Has Match Cut or visual transition (continuity of motion/color between Phases)
+- [ ] End Frame elements are streamlined (only product + Logo + Slogan)
+- [ ] Material descriptions have physical details (not "metal texture", but "brushed texture forming flowing highlights under side light")
+- [ ] Product state has variation arc (from still -> disassembly -> activation -> display -> freeze frame)
+- [ ] Brand tone is consistent
